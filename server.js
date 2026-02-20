@@ -23,3 +23,4 @@ mongoose.connect(process.env.MONGO_URI)
     })
     .catch((err) => console.log("Mitti se judne mein dikkat hui: ", err));
 
+app.use('/api/auth', require('./routes/auth'));
