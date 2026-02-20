@@ -38,5 +38,11 @@ router.get('/feed', async (req, res) => {
         res.status(500).send("Chopal khali hai, server error!");
     }
 });
+// @route GET /api/posts/local
+router.get('/local', async (req, res) => {
+    const { city } = req.query; 
+    const posts = await Post.find({ location: city }).sort({ createdAt: -1 });
+    res.json(posts);
+});
 
 
