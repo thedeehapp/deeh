@@ -24,4 +24,19 @@ router.post('/upload', auth, upload.single('image'), async (req, res) => {
 });
 
 module.exports = router;
+// @route GET /api/posts/feed
+// Description: Get all posts sorted by newest first
+router.get('/feed', async (req, res) => {
+    try {
+        const posts = await Post.find()
+            .populate('user', ['username', 'vibeScore']) // User ki details saath mein milengi
+            .sort({ createdAt: -1 }); // Naya maal pehle!
+
+        res.json(posts);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Chopal khali hai, server error!");
+    }
+});
+
 
