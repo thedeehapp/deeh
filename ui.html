@@ -109,6 +109,76 @@
 
     </div>
 
+<div id="privacyModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
+    
+    <div class="absolute bottom-0 w-full max-w-[450px] bg-white rounded-t-[40px] p-8 shadow-2xl transition-transform transform translate-y-0">
+        <div class="w-12 h-1.5 bg-gray-200 mx-auto rounded-full mb-8"></div>
+        
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold italic">Privacy Shield</h2>
+            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">100% Secure</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-blue-50 p-4 rounded-2xl">
+                <p class="text-[10px] text-blue-500 font-bold uppercase">Data Trackers</p>
+                <p class="text-xl font-bold">0 Blocked</p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-2xl">
+                <p class="text-[10px] text-purple-500 font-bold uppercase">Identity</p>
+                <p class="text-xl font-bold">Verified</p>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-bold">Incognito Mode</p>
+                    <p class="text-xs text-gray-400">आपकी एक्टिविटी कोई नहीं देख पाएगा</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                </label>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-bold">Screenshot Protection</p>
+                    <p class="text-xs text-gray-400">कोई आपकी चैट का स्क्रीनशॉट नहीं ले पाएगा</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                </label>
+            </div>
+        </div>
+
+        <button class="w-full mt-10 py-4 bg-red-50 text-red-600 font-bold rounded-2xl hover:bg-red-100 transition">
+            🗑️ Wipe My Data From Servers
+        </button>
+
+        <button onclick="togglePrivacyModal()" class="w-full mt-4 py-4 text-gray-400 font-medium">
+            Close Settings
+        </button>
+    </div>
+</div>
+
+<script>
+    function togglePrivacyModal() {
+        const modal = document.getElementById('privacyModal');
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // नीचे वाले Shield Icon (🛡️) को यह फंक्शन असाइन करें
+    // <button onclick="togglePrivacyModal()" class="text-2xl text-gray-400">🛡️</button>
+</script>
+
 </body>
 </html>
 
