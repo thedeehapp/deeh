@@ -3,114 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Deeh | The Clean Social Network</title>
+    <title>Project Deeh | Live App</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .gradient-text {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
+        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; }
+        .hidden { display: none; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .active-tab { color: #2563eb; border-bottom: 3px solid #2563eb; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body>
 
-    <nav class="sticky top-0 z-50 glass-effect p-4 shadow-sm">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold gradient-text italic">Deeh</h1>
-            <div class="space-x-6 hidden md:flex">
-                <a href="#features" class="hover:text-blue-600 transition">Features</a>
-                <a href="#privacy" class="hover:text-blue-600 transition">Privacy</a>
-                <button class="bg-blue-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-700">Get App</button>
-            </div>
-        </div>
-    </nav>
+    <div class="app-container">
 
-    <section class="py-20 px-6 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
-                सोशल मीडिया अब होगा <span class="gradient-text">साफ और सुरक्षित</span>
-            </h2>
-            <p class="text-xl text-gray-600 mb-10">
-                फेसबुक की भीड़भाड़ और इंस्टाग्राम के एल्गोरिदम से आज़ादी। <br>
-                Project Deeh: जहाँ आपका डेटा आपका है।
-            </p>
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <input type="email" placeholder="अपना ईमेल दर्ज करें" class="px-6 py-4 rounded-xl border border-gray-300 focus:outline-blue-500 w-full md:w-80 shadow-sm">
-                <button class="bg-black text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">
-                    Join Beta Waitlist
+        <div id="authPage" class="px-8 py-12">
+            <h1 class="text-4xl font-extrabold text-blue-600 italic mb-2">Deeh</h1>
+            <p class="text-gray-400 mb-10 font-medium">Reclaiming your digital freedom.</p>
+
+            <form id="signupForm" class="space-y-6">
+                <input type="text" id="regName" placeholder="आपका पूरा नाम" required class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" id="regEmail" placeholder="ईमेल एड्रेस" required class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="regPassword" placeholder="पासवर्ड (कम से कम 6 अक्षर)" required class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
+                
+                <button type="submit" class="w-full py-4 bg-blue-600 text-white font-extrabold rounded-2xl shadow-lg shadow-blue-200 active:scale-95 transition">
+                    Create Secure Account
                 </button>
-            </div>
+            </form>
+            <p id="loadingMsg" class="text-center mt-4 text-blue-600 hidden font-bold animate-pulse">Processing...</p>
         </div>
-    </section>
 
-    <section id="features" class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <h3 class="text-3xl font-bold text-center mb-16">Deeh क्यों चुनें?</h3>
-            <div class="grid md:grid-cols-3 gap-10">
-                <div class="p-8 rounded-2xl bg-gray-50 hover:shadow-xl transition border border-gray-100">
-                    <div class="text-blue-600 text-4xl mb-4">🛡️</div>
-                    <h4 class="text-xl font-bold mb-3">Zero Tracking</h4>
-                    <p class="text-gray-600">हम आपका डेटा विज्ञापनों के लिए कभी नहीं बेचते। आपकी प्राइवेसी हमारी जिम्मेदारी है।</p>
-                </div>
-                <div class="p-8 rounded-2xl bg-gray-50 hover:shadow-xl transition border border-gray-100">
-                    <div class="text-purple-600 text-4xl mb-4">⏳</div>
-                    <h4 class="text-xl font-bold mb-3">Chronological Feed</h4>
-                    <p class="text-gray-600">वही देखें जो आपके दोस्तों ने अभी पोस्ट किया है। कोई एल्गोरिदम हेराफेरी नहीं।</p>
-                </div>
-                <div class="p-8 rounded-2xl bg-gray-50 hover:shadow-xl transition border border-gray-100">
-                    <div class="text-green-600 text-4xl mb-4">👤</div>
-                    <h4 class="text-xl font-bold mb-3">Verified Humans</h4>
-                    <p class="text-gray-600">फेक प्रोफाइल्स और बॉट्स को रोकने के लिए AI-आधारित ह्युमन वेरिफिकेशन।</p>
+        <div id="mainApp" class="hidden">
+            <header class="sticky top-0 z-50 glass px-6 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-extrabold text-blue-600 italic">Deeh</h1>
+                <button id="logoutBtn" class="text-xs font-bold text-red-500 bg-red-50 px-3 py-1 rounded-lg">Logout</button>
+            </header>
+
+            <div class="flex justify-around bg-white border-b border-gray-100 sticky top-[65px] z-40">
+                <button onclick="showSection('feed')" id="feedTab" class="py-3 px-8 font-bold active-tab">Circle</button>
+                <button onclick="showSection('profile')" id="profileTab" class="py-3 px-8 font-bold text-gray-400">Profile</button>
+            </div>
+
+            <div id="feedSection" class="p-4 space-y-6">
+                <div class="bg-blue-50 p-6 rounded-[24px] text-center border-2 border-dashed border-blue-200">
+                    <p class="text-blue-600 font-bold">स्वागत है! आप अब पूरी तरह सुरक्षित हैं। 🛡️</p>
+                    <p class="text-[10px] text-gray-500 mt-2 italic font-medium">कोई डेटा चोरी नहीं, कोई एड्स नहीं।</p>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section class="py-20 bg-gray-900 text-white overflow-hidden">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0">
-                <h3 class="text-4xl font-bold mb-6 italic">Project Deeh <br> Experience</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-center space-x-3 italic">
-                        <span class="bg-blue-600 p-1 rounded-full">✓</span>
-                        <span>बिना विज्ञापन वाला क्लीन फीड</span>
-                    </li>
-                    <li class="flex items-center space-x-3 italic">
-                        <span class="bg-blue-600 p-1 rounded-full">✓</span>
-                        <span>छोटे क्रिएटर्स के लिए 'Reach Guarantee'</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="md:w-1/2 flex justify-center">
-                <div class="w-64 h-[500px] border-8 border-gray-800 rounded-[3rem] bg-white shadow-2xl relative overflow-hidden">
-                    <div class="bg-blue-600 h-6 w-1/2 mx-auto rounded-b-xl mb-4"></div>
-                    <div class="px-4">
-                        <div class="flex justify-between border-b pb-2 mb-4">
-                            <span class="text-black font-bold text-xs">Circle</span>
-                            <span class="text-gray-400 font-bold text-xs">Discover</span>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="h-32 bg-gray-200 rounded-xl animate-pulse"></div>
-                            <div class="h-4 bg-gray-200 w-3/4 rounded animate-pulse"></div>
-                            <div class="h-32 bg-gray-100 rounded-xl animate-pulse"></div>
-                        </div>
+            <div id="profileSection" class="hidden px-6 py-10 flex flex-col items-center">
+                <div id="pInitial" class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-xl">U</div>
+                <h2 id="pName" class="text-2xl font-bold text-gray-800">User Name</h2>
+                <p id="pEmail" class="text-gray-400 text-sm mb-8 italic">user@email.com</p>
+                
+                <div class="w-full bg-gray-50 rounded-3xl p-6 flex justify-around shadow-inner border border-gray-100">
+                    <div class="text-center">
+                        <p class="text-xl font-bold text-blue-600">98%</p>
+                        <p class="text-[10px] uppercase font-bold text-gray-400">Trust Score</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xl font-bold text-blue-600">Active</p>
+                        <p class="text-[10px] uppercase font-bold text-gray-400">Privacy Status</p>
                     </div>
                 </div>
             </div>
+
+            <nav class="fixed bottom-0 w-full max-w-[450px] glass border-t border-gray-100 px-10 py-5 flex justify-between items-center rounded-t-[30px] shadow-2xl z-50">
+                <button onclick="showSection('feed')" class="text-2xl">🏠</button>
+                <button onclick="alert('Securing connection...')" class="w-12 h-12 bg-blue-600 rounded-2xl text-white text-2xl shadow-lg hover:scale-110 transition">+</button>
+                <button onclick="showSection('profile')" class="text-2xl">👤</button>
+            </nav>
         </div>
-    </section>
+    </div>
 
-    <footer class="py-10 text-center border-t border-gray-200">
-        <p class="text-gray-500 italic">© 2026 Project Deeh. Reclaiming Human Connection.</p>
-    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // Your Real Config from Screenshot
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmwtDM6mget0nZhkGA0D-cUhMrgMd4LQs",
+            authDomain: "deeh-e87bf.firebaseapp.com",
+            databaseURL: "https://deeh-e87bf-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "deeh-e87bf",
+            storageBucket: "deeh-e87bf.firebasestorage.app",
+            messagingSenderId: "618337488833",
+            appId: "1:618337488833:web:a0a9fdb3df462e6fc1a940",
+            measurementId: "G-232RT46WNQ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        // 1. Monitor Auth State (Login Check)
+        onAuthStateChanged(auth, (user) => {
+            const authPage = document.getElementById('authPage');
+            const mainApp = document.getElementById('mainApp');
+            
+            if (user) {
+                authPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                document.getElementById('pName').innerText = user.displayName || "User";
+                document.getElementById('pEmail').innerText = user.email;
+                document.getElementById('pInitial').innerText = (user.displayName || "U")[0].toUpperCase();
+            } else {
+                authPage.classList.remove('hidden');
+                mainApp.classList.add('hidden');
+            }
+        });
+
+        // 2. Signup Function
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPassword').value;
+            const loader = document.getElementById('loadingMsg');
+
+            loader.classList.remove('hidden');
+
+            try {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await updateProfile(res.user, { displayName: name });
+                alert("स्वागत है " + name + "! आपका सुरक्षित अकाउंट बन गया है।");
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                loader.classList.add('hidden');
+            }
+        });
+
+        // 3. Logout Function
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth);
+        });
+
+    </script>
+
+    <script>
+        // Simple View Switcher
+        function showSection(section) {
+            const feed = document.getElementById('feedSection');
+            const profile = document.getElementById('profileSection');
+            const fTab = document.getElementById('feedTab');
+            const pTab = document.getElementById('profileTab');
+
+            if (section === 'feed') {
+                feed.classList.remove('hidden');
+                profile.classList.add('hidden');
+                fTab.classList.add('active-tab');
+                pTab.classList.remove('active-tab');
+                pTab.classList.add('text-gray-400');
+            } else {
+                feed.classList.add('hidden');
+                profile.classList.remove('hidden');
+                pTab.classList.add('active-tab');
+                pTab.classList.remove('text-gray-400');
+                fTab.classList.remove('active-tab');
+                fTab.classList.add('text-gray-400');
+            }
+        }
+    </script>
 </body>
 </html>
