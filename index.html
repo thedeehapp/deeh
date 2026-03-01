@@ -3,143 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deeh | Live Social App</title>
+    <title>Deeh - Social Circle</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f3f4f6; }
-        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
-        .hidden { display: none !important; }
-        .active-tab { color: #3b82f6; border-bottom: 3px solid #3b82f6; font-weight: 700; }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f0f2f5; }
+        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+        .story-ring { background: linear-gradient(45deg, #f09433, #d62976, #962fbf, #4f5bd5); padding: 3px; border-radius: 50%; }
+        .story-ring img { border: 3px solid white; border-radius: 50%; }
+        .active-tab { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
+        .post-card { transition: all 0.2s; }
+        .post-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .like-btn.active { color: #ef4444; transform: scale(1.1); }
+        .like-btn.active i { font-weight: 900; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 1000; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
-        .preview-image { width: 100%; max-height: 200px; object-fit: cover; border-radius: 15px; margin-top: 10px; }
+        .preview-image { width: 100%; max-height: 250px; object-fit: cover; border-radius: 15px; margin-top: 10px; }
+        .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .settings-item { transition: all 0.2s; }
+        .settings-item:hover { background: #f3f4f6; transform: translateX(5px); }
+        .dark-mode { background: #1a1a1a; color: white; }
+        .dark-mode .bg-white { background: #2d2d2d; color: white; }
     </style>
 </head>
 <body>
 
-<div class="app-container pb-24">
-    <!-- Toast Notification -->
+<div class="app-container relative" id="appContainer">
+    <!-- Toast -->
     <div id="toast" class="toast hidden"></div>
 
-    <!-- AUTH PAGE -->
-    <div id="authPage" class="px-8 py-20 text-center min-h-screen flex flex-col justify-center bg-gradient-to-r from-blue-500 to-purple-600">
-        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
-            <h1 class="text-5xl font-extrabold text-white mb-2">Deeh</h1>
-            <p class="text-white/80 mb-10">अपनी real दुनिया से जुड़ें</p>
-            
-            <form id="signupForm" class="space-y-4">
-                <input type="text" id="regName" placeholder="आपका नाम" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
-                <input type="email" id="regEmail" placeholder="ईमेल" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
-                <input type="password" id="regPassword" placeholder="पासवर्ड" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
-                <button type="submit" class="w-full py-4 bg-white text-blue-600 font-bold rounded-2xl text-lg shadow-xl hover:bg-blue-50">
-                    Join Now 🚀
-                </button>
-            </form>
-            
-            <p class="text-white/60 text-xs mt-6">पहले से अकाउंट है? <span class="text-white font-bold cursor-pointer hover:underline" onclick="showLoginForm()">लॉगिन करें</span></p>
-        </div>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-[200] hidden flex items-center justify-center">
+        <div class="bg-white p-5 rounded-full"><i class="fas fa-spinner fa-spin text-3xl text-blue-600"></i></div>
     </div>
 
-    <!-- LOGIN PAGE -->
-    <div id="loginPage" class="px-8 py-20 text-center min-h-screen flex flex-col justify-center bg-gradient-to-r from-blue-500 to-purple-600 hidden">
-        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
-            <h1 class="text-5xl font-extrabold text-white mb-10">Welcome Back! 👋</h1>
+    <!-- AUTH PAGE -->
+    <div id="authPage" class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
+        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 w-full shadow-2xl border border-white/30">
+            <div class="text-center mb-8">
+                <h1 class="text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">DEEH</h1>
+                <p class="text-gray-500 text-sm">Where real meets social ✨</p>
+            </div>
             
+            <div class="flex gap-2 mb-6">
+                <button onclick="toggleAuthTab('login')" id="loginTabBtn" class="flex-1 py-3 font-bold rounded-xl bg-blue-600 text-white">Login</button>
+                <button onclick="toggleAuthTab('signup')" id="signupTabBtn" class="flex-1 py-3 font-bold rounded-xl bg-gray-100 text-gray-600">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
             <form id="loginForm" class="space-y-4">
-                <input type="email" id="loginEmail" placeholder="ईमेल" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
-                <input type="password" id="loginPassword" placeholder="पासवर्ड" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
-                <button type="submit" class="w-full py-4 bg-white text-blue-600 font-bold rounded-2xl text-lg shadow-xl hover:bg-blue-50">
-                    Login 🔐
+                <input type="email" id="loginEmail" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
+                <input type="password" id="loginPassword" placeholder="Password" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition">
+                    Login <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </form>
-            
-            <p class="text-white/60 text-xs mt-6">नए हैं? <span class="text-white font-bold cursor-pointer hover:underline" onclick="showSignupForm()">साइन अप करें</span></p>
+
+            <!-- Signup Form (hidden initially) -->
+            <form id="signupForm" class="space-y-4 hidden">
+                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
+                <input type="email" id="regEmail" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
+                <input type="password" id="regPassword" placeholder="Password" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition">
+                    Create Account <i class="fas fa-user-plus ml-2"></i>
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- MAIN APP -->
     <div id="mainApp" class="hidden">
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 text-white">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-extrabold">Dee</h1>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm bg-green-400 text-green-900 px-3 py-1 rounded-full">● Online</span>
-                    <button onclick="logout()" class="text-sm bg-white/20 px-4 py-2 rounded-xl hover:bg-white/30">Logout</button>
+        <!-- Header - Instagram Style -->
+        <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b px-4 py-3 flex justify-between items-center">
+            <h1 class="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">DEEH</h1>
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-heart text-2xl text-gray-600 hover:text-red-500 cursor-pointer transition"></i>
+                <i class="fas fa-envelope text-2xl text-gray-600 hover:text-blue-500 cursor-pointer transition"></i>
+                <i class="fas fa-cog text-2xl text-gray-600 hover:text-gray-900 cursor-pointer transition" onclick="showSection('settings')"></i>
+            </div>
+        </div>
+
+        <!-- Stories - Instagram Style -->
+        <div class="px-4 py-3 border-b overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <div class="inline-flex space-x-4">
+                <div class="flex flex-col items-center">
+                    <div class="story-ring w-16 h-16">
+                        <img src="https://via.placeholder.com/100" class="w-full h-full rounded-full border-3 border-white">
+                    </div>
+                    <span class="text-xs mt-1 font-medium">Your Story</span>
+                </div>
+                <!-- More stories will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Tabs - Twitter Style -->
+        <div class="flex border-b sticky top-[73px] z-40 bg-white">
+            <button onclick="showSection('feed')" id="feedTab" class="flex-1 py-3 font-bold text-center active-tab">
+                <i class="fas fa-stream mr-2"></i>Feed
+            </button>
+            <button onclick="showSection('explore')" id="exploreTab" class="flex-1 py-3 font-bold text-center text-gray-400">
+                <i class="fas fa-compass mr-2"></i>Explore
+            </button>
+            <button onclick="showSection('profile')" id="profileTab" class="flex-1 py-3 font-bold text-center text-gray-400">
+                <i class="fas fa-user mr-2"></i>Profile
+            </button>
+            <button onclick="showSection('settings')" id="settingsTab" class="flex-1 py-3 font-bold text-center text-gray-400">
+                <i class="fas fa-cog mr-2"></i>Settings
+            </button>
+        </div>
+
+        <!-- FEED SECTION - Instagram + Twitter Mix -->
+        <div id="feedSection" class="pb-20">
+            <div id="postsList" class="divide-y"></div>
+        </div>
+
+        <!-- EXPLORE SECTION - Grid Layout -->
+        <div id="exploreSection" class="hidden p-4 pb-20">
+            <div class="grid grid-cols-3 gap-1">
+                <!-- Explore grid items will load here -->
+                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">📸</div>
+                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">📸</div>
+                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">📸</div>
+            </div>
+        </div>
+
+        <!-- PROFILE SECTION - Instagram + Facebook Mix -->
+        <div id="profileSection" class="hidden pb-20">
+            <!-- Cover Photo -->
+            <div class="h-32 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+            
+            <!-- Profile Info -->
+            <div class="px-4 -mt-12">
+                <div class="relative">
+                    <div class="w-24 h-24 rounded-full border-4 border-white overflow-hidden bg-white">
+                        <div id="pInitial" class="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-3xl font-bold">D</div>
+                    </div>
+                    <button class="absolute top-0 right-0 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-blue-700 transition">
+                        Edit Profile
+                    </button>
+                </div>
+                
+                <div class="mt-3">
+                    <h2 id="pName" class="text-2xl font-bold">DEEPAK</h2>
+                    <p id="pEmail" class="text-gray-500 text-sm mb-3">dipakpal73070@gmail.com</p>
+                    <p class="text-gray-700 mb-4">✨ Building something amazing | Tech enthusiast | Travel lover</p>
+                </div>
+
+                <!-- Stats - Facebook Style -->
+                <div class="flex justify-around py-4 border-y mb-4">
+                    <div class="text-center">
+                        <span id="userPostCount" class="block text-2xl font-bold">0</span>
+                        <span class="text-gray-500 text-sm">Posts</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block text-2xl font-bold">1.2k</span>
+                        <span class="text-gray-500 text-sm">Followers</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block text-2xl font-bold">567</span>
+                        <span class="text-gray-500 text-sm">Following</span>
+                    </div>
+                </div>
+
+                <!-- Profile Tabs -->
+                <div class="flex border-b">
+                    <button onclick="showProfileTab('posts')" id="profilePostsTab" class="flex-1 py-3 text-center font-bold text-blue-600 border-b-2 border-blue-600">
+                        <i class="fas fa-th-large mr-2"></i>Posts
+                    </button>
+                    <button onclick="showProfileTab('reels')" id="profileReelsTab" class="flex-1 py-3 text-center font-bold text-gray-400">
+                        <i class="fas fa-video mr-2"></i>Reels
+                    </button>
+                    <button onclick="showProfileTab('tagged')" id="profileTaggedTab" class="flex-1 py-3 text-center font-bold text-gray-400">
+                        <i class="fas fa-tag mr-2"></i>Tagged
+                    </button>
+                </div>
+
+                <!-- Profile Posts Grid -->
+                <div id="profilePostsGrid" class="grid grid-cols-3 gap-1 mt-2">
+                    <!-- Posts will load here -->
+                </div>
+                <div id="profileReelsGrid" class="hidden grid grid-cols-3 gap-1 mt-2"></div>
+                <div id="profileTaggedGrid" class="hidden grid grid-cols-3 gap-1 mt-2"></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS SECTION - Facebook Style -->
+        <div id="settingsSection" class="hidden pb-20">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold mb-6">Settings & Privacy</h2>
+                
+                <div class="space-y-2">
+                    <!-- Account Settings -->
+                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('account')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-user-circle text-2xl text-blue-600"></i>
+                                <div>
+                                    <h3 class="font-bold">Account</h3>
+                                    <p class="text-sm text-gray-500">Edit profile, change password</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Privacy -->
+                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('privacy')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-lock text-2xl text-green-600"></i>
+                                <div>
+                                    <h3 class="font-bold">Privacy</h3>
+                                    <p class="text-sm text-gray-500">Control your visibility</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('notifications')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-bell text-2xl text-yellow-600"></i>
+                                <div>
+                                    <h3 class="font-bold">Notifications</h3>
+                                    <p class="text-sm text-gray-500">Manage alerts</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dark Mode Toggle -->
+                    <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-moon text-2xl text-purple-600"></i>
+                            <div>
+                                <h3 class="font-bold">Dark Mode</h3>
+                                <p class="text-sm text-gray-500">Toggle theme</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="darkModeToggle" class="sr-only peer" onchange="toggleDarkMode()">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <!-- Help & Support -->
+                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('help')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-question-circle text-2xl text-red-600"></i>
+                                <div>
+                                    <h3 class="font-bold">Help & Support</h3>
+                                    <p class="text-sm text-gray-500">Get help</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Logout -->
+                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="logout()">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-sign-out-alt text-2xl text-red-600"></i>
+                            <div>
+                                <h3 class="font-bold text-red-600">Logout</h3>
+                                <p class="text-sm text-gray-500">Sign out from DEEH</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex justify-around bg-white border-b font-bold text-gray-600">
-            <button onclick="showSection('feed')" id="feedTab" class="py-3 px-8 active-tab">Circle</button>
-            <button onclick="showSection('profile')" id="profileTab" class="py-3 px-8 text-gray-400">Profile</button>
-        </div>
-
-        <!-- Feed Section -->
-        <div id="feedSection" class="p-4">
-            <div id="postsList" class="space-y-4">
-                <!-- Posts will load here -->
-            </div>
-        </div>
-
-        <!-- Profile Section (Exactly like screenshot) -->
-        <div id="profileSection" class="hidden p-6">
-            <div class="text-center">
-                <!-- Profile Avatar -->
-                <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
-                    <span id="pInitial">D</span>
+        <!-- Create Post Modal - Instagram Style -->
+        <div id="postModal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+            <div class="bg-white rounded-2xl w-full max-w-md p-6 transform transition-all">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Create new post</h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
                 </div>
                 
-                <!-- Name and Email -->
-                <h2 id="pName" class="text-xl font-bold text-gray-800">DEEPAK</h2>
-                <p id="pEmail" class="text-gray-500 text-sm mb-6">dipakpal73070@gmail.com</p>
+                <textarea id="postText" rows="4" class="w-full p-3 border rounded-xl mb-4 focus:ring-2 focus:ring-blue-600 outline-none" placeholder="What's on your mind?"></textarea>
                 
-                <!-- Total Posts Card -->
-                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                    <p class="text-3xl font-bold text-blue-600" id="userPostCount">0</p>
-                    <p class="text-sm text-gray-500 mt-1">TOTAL POSTS</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Post Modal with Image Upload -->
-        <div id="postModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
-            <div class="w-full bg-white rounded-2xl p-6">
-                <h3 class="text-xl font-bold text-blue-600 mb-4">नई पोस्ट लिखें 📝</h3>
-                
-                <textarea id="postText" class="w-full h-32 p-3 bg-gray-50 rounded-xl border border-gray-200 mb-4" placeholder="क्या चल रहा है?"></textarea>
-                
-                <!-- Image Upload -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">📸 फोटो डालें</label>
-                    <input type="file" id="postImage" accept="image/*" class="w-full p-2 bg-gray-50 rounded-xl border border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Add photo</label>
+                    <input type="file" id="postImage" accept="image/*" class="w-full p-2 border rounded-xl">
                     <div id="imagePreview" class="mt-2 hidden"></div>
                 </div>
                 
-                <div class="flex space-x-2">
-                    <button onclick="savePost()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl">
-                        Publish 🚀
+                <div class="flex gap-2">
+                    <button onclick="savePost()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition">
+                        <i class="fas fa-paper-plane mr-2"></i>Post
                     </button>
-                    <button onclick="closeModal()" class="px-6 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl">
+                    <button onclick="closeModal()" class="px-6 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition">
                         Cancel
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <div class="fixed bottom-0 w-full max-w-[450px] bg-white border-t px-12 py-3 flex justify-between items-center">
-            <button onclick="showSection('feed')" class="text-2xl" id="navHome">🏠</button>
-            <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-white text-2xl shadow-lg -mt-8">+</button>
-            <button onclick="showSection('profile')" class="text-2xl" id="navProfile">👤</button>
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this) closeSettingsModal()">
+            <div class="bg-white rounded-2xl w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="settingsModalTitle" class="text-xl font-bold"></h3>
+                    <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <div id="settingsModalContent" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation - Custom Mix -->
+        <div class="fixed bottom-0 w-full max-w-[450px] bg-white border-t px-6 py-3 flex justify-between items-center">
+            <button onclick="showSection('feed')" class="flex flex-col items-center" id="navHome">
+                <i class="fas fa-home text-2xl"></i>
+                <span class="text-xs mt-1">Home</span>
+            </button>
+            <button onclick="showSection('explore')" class="flex flex-col items-center" id="navExplore">
+                <i class="fas fa-compass text-2xl"></i>
+                <span class="text-xs mt-1">Explore</span>
+            </button>
+            <button onclick="openModal()" class="bg-gradient-to-r from-blue-600 to-purple-600 w-14 h-14 rounded-full text-white text-2xl -mt-8 shadow-lg flex items-center justify-center">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button onclick="showSection('profile')" class="flex flex-col items-center" id="navProfile">
+                <i class="fas fa-user text-2xl"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </button>
+            <button onclick="showSection('settings')" class="flex flex-col items-center" id="navSettings">
+                <i class="fas fa-cog text-2xl"></i>
+                <span class="text-xs mt-1">Settings</span>
+            </button>
         </div>
     </div>
 </div>
 
+<!-- FIREBASE IMPORTS -->
 <script type="module">
-    // 🔥 FIREBASE IMPORTS
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
         getAuth, 
@@ -147,7 +352,10 @@
         signInWithEmailAndPassword,
         updateProfile, 
         signOut,
-        onAuthStateChanged 
+        onAuthStateChanged,
+        updatePassword,
+        EmailAuthProvider,
+        reauthenticateWithCredential
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
         getFirestore, 
@@ -164,16 +372,19 @@
         deleteDoc,
         arrayUnion,
         arrayRemove,
-        increment
+        increment,
+        limit,
+        getDoc
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import {
         getStorage,
         ref,
         uploadBytes,
-        getDownloadURL
+        getDownloadURL,
+        deleteObject
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    // 🔥 FIREBASE CONFIG - APNA CONFIG YAHAN DALO
+    // 🔥 FIREBASE CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyBmwtDM6mget0nZhkGA0D-cUhMrgMd4LQs",
         authDomain: "deeh-e87bf.firebaseapp.com",
@@ -189,10 +400,11 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
+    // Global Variables
     let currentUser = null;
     let unsubscribePosts = null;
 
-    // Toast Function
+    // Utility Functions
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         toast.textContent = message;
@@ -201,20 +413,55 @@
         setTimeout(() => toast.classList.add('hidden'), 3000);
     }
 
-    // Global functions
-    window.showLoginForm = function() {
-        document.getElementById('authPage').classList.add('hidden');
-        document.getElementById('loginPage').classList.remove('hidden');
+    function showLoading(show) {
+        document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+    }
+
+    // Toggle Auth Tabs
+    window.toggleAuthTab = (tab) => {
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const loginTab = document.getElementById('loginTabBtn');
+        const signupTab = document.getElementById('signupTabBtn');
+        
+        if (tab === 'login') {
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            loginTab.classList.add('bg-blue-600', 'text-white');
+            loginTab.classList.remove('bg-gray-100', 'text-gray-600');
+            signupTab.classList.remove('bg-blue-600', 'text-white');
+            signupTab.classList.add('bg-gray-100', 'text-gray-600');
+        } else {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            signupTab.classList.add('bg-blue-600', 'text-white');
+            signupTab.classList.remove('bg-gray-100', 'text-gray-600');
+            loginTab.classList.remove('bg-blue-600', 'text-white');
+            loginTab.classList.add('bg-gray-100', 'text-gray-600');
+        }
     };
 
-    window.showSignupForm = function() {
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('authPage').classList.remove('hidden');
+    // Login Handler
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        showLoading(true);
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            showToast('Welcome back! 🎉');
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            showLoading(false);
+        }
     };
 
-    // Signup
+    // Signup Handler
     document.getElementById('signupForm').onsubmit = async (e) => {
         e.preventDefault();
+        showLoading(true);
         const name = document.getElementById('regName').value;
         const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPassword').value;
@@ -222,41 +469,43 @@
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(res.user, { displayName: name });
+            
+            // Create user profile
+            await addDoc(collection(db, "users"), {
+                uid: res.user.uid,
+                name: name,
+                email: email,
+                bio: "Building something amazing ✨",
+                followers: 0,
+                following: 0,
+                createdAt: serverTimestamp()
+            });
+            
             showToast('Account created! 🎉');
         } catch (err) {
             showToast(err.message, 'error');
+        } finally {
+            showLoading(false);
         }
     };
 
-    // Login
-    document.getElementById('loginForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            showToast('Login successful! 🎉');
-        } catch (err) {
-            showToast(err.message, 'error');
-        }
-    };
-
-    // Auth State
+    // Auth State Observer
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
             
             document.getElementById('authPage').classList.add('hidden');
-            document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             
+            // Update profile UI
             document.getElementById('pName').innerText = (user.displayName || 'User').toUpperCase();
             document.getElementById('pEmail').innerText = user.email;
             document.getElementById('pInitial').innerText = (user.displayName || 'U')[0].toUpperCase();
             
-            loadPosts();
+            // Load data
             await loadUserPostCount(user.uid);
+            loadPosts();
+            loadProfilePosts(user.uid);
         } else {
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('authPage').classList.remove('hidden');
@@ -264,30 +513,121 @@
         }
     });
 
-    // Load Post Count
+    // Load User Post Count
     async function loadUserPostCount(uid) {
         const q = query(collection(db, "posts"), where("userId", "==", uid));
         const snapshot = await getDocs(q);
         document.getElementById('userPostCount').textContent = snapshot.size;
     }
 
-    // Image Preview
-    document.getElementById('postImage')?.addEventListener('change', function(e) {
-        const preview = document.getElementById('imagePreview');
-        const file = e.target.files[0];
+    // Load Posts for Feed
+    function loadPosts() {
+        const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
         
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" class="preview-image">`;
-                preview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            preview.classList.add('hidden');
-            preview.innerHTML = '';
+        unsubscribePosts = onSnapshot(q, (snapshot) => {
+            const list = document.getElementById('postsList');
+            
+            if (snapshot.empty) {
+                list.innerHTML = '<div class="p-8 text-center text-gray-400">No posts yet. Be the first! ✨</div>';
+                return;
+            }
+
+            let postsHTML = '';
+            snapshot.forEach((doc) => {
+                const post = doc.data();
+                const postId = doc.id;
+                const isLiked = post.likedBy?.includes(currentUser?.uid) || false;
+                const time = post.timestamp?.toDate?.() || new Date();
+                
+                postsHTML += `
+                    <div class="post-card p-4" id="post-${postId}">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    ${post.userName?.[0] || 'U'}
+                                </div>
+                                <div>
+                                    <p class="font-bold">${post.userName}</p>
+                                    <p class="text-xs text-gray-400">${time.toLocaleString()}</p>
+                                </div>
+                            </div>
+                            ${post.userId === currentUser?.uid ? `
+                                <button onclick="deletePost('${postId}')" class="text-gray-400 hover:text-red-500">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        
+                        <p class="text-gray-700 mb-3">${post.content || ''}</p>
+                        
+                        ${post.imageUrl ? `
+                            <img src="${post.imageUrl}" class="w-full rounded-xl mb-3 max-h-96 object-cover">
+                        ` : ''}
+                        
+                        <div class="flex items-center justify-between pt-3 border-t">
+                            <button onclick="likePost('${postId}')" class="flex items-center space-x-2 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
+                                <i class="fas fa-heart text-xl ${isLiked ? 'font-bold' : ''}"></i>
+                                <span class="text-sm font-medium">${post.likes || 0}</span>
+                            </button>
+                            
+                            <button onclick="toggleComments('${postId}')" class="flex items-center space-x-2 text-gray-400">
+                                <i class="fas fa-comment text-xl"></i>
+                                <span class="text-sm font-medium">${post.comments?.length || 0}</span>
+                            </button>
+                            
+                            <button onclick="sharePost('${postId}')" class="text-gray-400">
+                                <i class="fas fa-paper-plane text-xl"></i>
+                            </button>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div id="comments-${postId}" class="hidden mt-4">
+                            <div class="flex space-x-2 mb-3">
+                                <input type="text" id="comment-${postId}" placeholder="Write a comment..." class="flex-1 p-2 bg-gray-50 rounded-xl text-sm">
+                                <button onclick="addComment('${postId}')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm">Post</button>
+                            </div>
+                            <div id="comments-list-${postId}" class="space-y-2 max-h-48 overflow-y-auto">
+                                ${post.comments?.map(comment => `
+                                    <div class="bg-gray-50 p-3 rounded-xl">
+                                        <p class="text-xs font-bold">${comment.userName}</p>
+                                        <p class="text-sm">${comment.text}</p>
+                                    </div>
+                                `).join('') || ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = postsHTML;
+        });
+    }
+
+    // Load Profile Posts Grid
+    async function loadProfilePosts(uid) {
+        const q = query(collection(db, "posts"), where("userId", "==", uid), orderBy("timestamp", "desc"), limit(9));
+        const snapshot = await getDocs(q);
+        const grid = document.getElementById('profilePostsGrid');
+        
+        if (snapshot.empty) {
+            grid.innerHTML = '<div class="col-span-3 text-center py-10 text-gray-400">No posts yet</div>';
+            return;
         }
-    });
+
+        let html = '';
+        snapshot.forEach((doc) => {
+            const post = doc.data();
+            html += `
+                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    ${post.imageUrl ? 
+                        `<img src="${post.imageUrl}" class="w-full h-full object-cover">` : 
+                        `<div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl">📝</div>`
+                    }
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+    }
 
     // Save Post
     window.savePost = async function() {
@@ -295,10 +635,12 @@
         const imageFile = document.getElementById('postImage').files[0];
         
         if (!text && !imageFile) {
-            showToast('कुछ लिखो या फोटो डालो!', 'error');
+            showToast('Write something or add a photo!', 'error');
             return;
         }
 
+        showLoading(true);
+        
         try {
             let imageUrl = null;
             
@@ -325,66 +667,16 @@
             document.getElementById('imagePreview').classList.add('hidden');
             closeModal();
             
-            showToast('पोस्ट हो गई! 🎉');
+            showToast('Post published! 🎉');
             await loadUserPostCount(currentUser.uid);
+            loadProfilePosts(currentUser.uid);
             
         } catch (err) {
             showToast('Error: ' + err.message, 'error');
+        } finally {
+            showLoading(false);
         }
     };
-
-    // Load Posts
-    function loadPosts() {
-        const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-        
-        unsubscribePosts = onSnapshot(q, (snapshot) => {
-            const list = document.getElementById('postsList');
-            
-            if (snapshot.empty) {
-                list.innerHTML = '<div class="text-center py-16 text-gray-500">कोई पोस्ट नहीं है</div>';
-                return;
-            }
-
-            let postsHTML = '';
-            snapshot.forEach((doc) => {
-                const post = doc.data();
-                const postId = doc.id;
-                const isLiked = post.likedBy?.includes(currentUser?.uid) || false;
-                const time = post.timestamp?.toDate?.() || new Date();
-                
-                postsHTML += `
-                    <div class="bg-white border rounded-xl p-4">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-                                ${post.userName?.[0] || 'U'}
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm">${post.userName}</p>
-                                <p class="text-xs text-gray-400">${time.toLocaleString()}</p>
-                            </div>
-                        </div>
-                        
-                        <p class="text-gray-700 mb-2">${post.content || ''}</p>
-                        
-                        ${post.imageUrl ? `<img src="${post.imageUrl}" class="w-full rounded-lg mb-2 max-h-60 object-cover">` : ''}
-                        
-                        <div class="flex items-center space-x-4 pt-2 border-t">
-                            <button onclick="likePost('${postId}')" class="flex items-center space-x-1 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
-                                <span>❤️</span>
-                                <span class="text-sm">${post.likes || 0}</span>
-                            </button>
-                            <button onclick="toggleComments('${postId}')" class="flex items-center space-x-1 text-gray-400">
-                                <span>💬</span>
-                                <span class="text-sm">${post.comments?.length || 0}</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            list.innerHTML = postsHTML;
-        });
-    }
 
     // Like Post
     window.likePost = async (postId) => {
@@ -393,39 +685,256 @@
         const post = postSnapshot.docs[0]?.data();
         
         if (post?.likedBy?.includes(currentUser.uid)) {
-            await updateDoc(postRef, { likes: increment(-1), likedBy: arrayRemove(currentUser.uid) });
+            await updateDoc(postRef, { 
+                likes: increment(-1), 
+                likedBy: arrayRemove(currentUser.uid) 
+            });
         } else {
-            await updateDoc(postRef, { likes: increment(1), likedBy: arrayUnion(currentUser.uid) });
+            await updateDoc(postRef, { 
+                likes: increment(1), 
+                likedBy: arrayUnion(currentUser.uid) 
+            });
         }
     };
 
-    window.toggleComments = (postId) => {
-        // Comments functionality
-    };
-
-    window.logout = () => signOut(auth);
-
-    window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
-    window.closeModal = () => document.getElementById('postModal').classList.add('hidden');
-
-    window.showSection = (section) => {
-        const feed = document.getElementById('feedSection');
-        const profile = document.getElementById('profileSection');
-        const feedTab = document.getElementById('feedTab');
-        const profileTab = document.getElementById('profileTab');
+    // Add Comment
+    window.addComment = async (postId) => {
+        const commentInput = document.getElementById(`comment-${postId}`);
+        const commentText = commentInput.value.trim();
         
-        if (section === 'feed') {
-            feed.classList.remove('hidden');
-            profile.classList.add('hidden');
-            feedTab.classList.add('active-tab');
-            profileTab.classList.remove('active-tab');
+        if (!commentText) return;
+        
+        const postRef = doc(db, "posts", postId);
+        
+        await updateDoc(postRef, {
+            comments: arrayUnion({
+                userId: currentUser.uid,
+                userName: currentUser.displayName || 'User',
+                text: commentText,
+                timestamp: new Date().toISOString()
+            })
+        });
+        
+        commentInput.value = "";
+        showToast("Comment added!");
+    };
+
+    // Delete Post
+    window.deletePost = async (postId) => {
+        if (!confirm("Delete this post?")) return;
+        
+        showLoading(true);
+        await deleteDoc(doc(db, "posts", postId));
+        showToast("Post deleted");
+        await loadUserPostCount(currentUser.uid);
+        loadProfilePosts(currentUser.uid);
+        showLoading(false);
+    };
+
+    // Share Post
+    window.sharePost = (postId) => {
+        navigator.clipboard?.writeText(window.location.href + '#post-' + postId);
+        showToast("Link copied! 📋");
+    };
+
+    // Toggle Comments
+    window.toggleComments = (postId) => {
+        const commentsDiv = document.getElementById(`comments-${postId}`);
+        if (commentsDiv) commentsDiv.classList.toggle('hidden');
+    };
+
+    // Logout
+    window.logout = async () => {
+        await signOut(auth);
+        showToast("Logged out successfully");
+    };
+
+    // Modal Functions
+    window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
+    window.closeModal = () => {
+        document.getElementById('postModal').classList.add('hidden');
+        document.getElementById('postText').value = '';
+        document.getElementById('postImage').value = '';
+        document.getElementById('imagePreview').innerHTML = '';
+        document.getElementById('imagePreview').classList.add('hidden');
+    };
+
+    // Image Preview
+    document.getElementById('postImage')?.addEventListener('change', function(e) {
+        const preview = document.getElementById('imagePreview');
+        const file = e.target.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" class="preview-image">`;
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
         } else {
-            feed.classList.add('hidden');
-            profile.classList.remove('hidden');
-            feedTab.classList.remove('active-tab');
-            profileTab.classList.add('active-tab');
+            preview.classList.add('hidden');
+            preview.innerHTML = '';
+        }
+    });
+
+    // Section Toggle
+    window.showSection = (section) => {
+        const sections = ['feed', 'explore', 'profile', 'settings'];
+        const tabs = ['feedTab', 'exploreTab', 'profileTab', 'settingsTab'];
+        const navs = ['navHome', 'navExplore', 'navProfile', 'navSettings'];
+        
+        sections.forEach(s => {
+            document.getElementById(s + 'Section')?.classList.add('hidden');
+        });
+        
+        document.getElementById(section + 'Section')?.classList.remove('hidden');
+        
+        tabs.forEach((tab, index) => {
+            const el = document.getElementById(tab);
+            if (el) {
+                if (sections[index] === section) {
+                    el.classList.add('active-tab');
+                    el.classList.remove('text-gray-400');
+                } else {
+                    el.classList.remove('active-tab');
+                    el.classList.add('text-gray-400');
+                }
+            }
+        });
+        
+        navs.forEach((nav, index) => {
+            const el = document.getElementById(nav);
+            if (el) {
+                if (sections[index] === section) {
+                    el.classList.add('text-blue-600');
+                } else {
+                    el.classList.remove('text-blue-600');
+                }
+            }
+        });
+    };
+
+    // Profile Tab Toggle
+    window.showProfileTab = (tab) => {
+        const tabs = ['posts', 'reels', 'tagged'];
+        tabs.forEach(t => {
+            document.getElementById('profile' + t.charAt(0).toUpperCase() + t.slice(1) + 'Grid')?.classList.add('hidden');
+            document.getElementById('profile' + t.charAt(0).toUpperCase() + t.slice(1) + 'Tab')?.classList.remove('text-blue-600', 'border-blue-600');
+            document.getElementById('profile' + t.charAt(0).toUpperCase() + t.slice(1) + 'Tab')?.classList.add('text-gray-400');
+        });
+        
+        document.getElementById('profile' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Grid')?.classList.remove('hidden');
+        document.getElementById('profile' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab')?.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+        document.getElementById('profile' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab')?.classList.remove('text-gray-400');
+    };
+
+    // Settings Modal
+    window.openSettingsModal = (type) => {
+        const modal = document.getElementById('settingsModal');
+        const title = document.getElementById('settingsModalTitle');
+        const content = document.getElementById('settingsModalContent');
+        
+        title.innerText = type.charAt(0).toUpperCase() + type.slice(1) + ' Settings';
+        
+        if (type === 'account') {
+            content.innerHTML = `
+                <input type="text" id="editName" placeholder="Full Name" value="${currentUser?.displayName || ''}" class="w-full p-3 border rounded-xl">
+                <button onclick="updateProfileName()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl">Update Name</button>
+                <div class="border-t my-4"></div>
+                <input type="password" id="currentPassword" placeholder="Current Password" class="w-full p-3 border rounded-xl mb-3">
+                <input type="password" id="newPassword" placeholder="New Password" class="w-full p-3 border rounded-xl mb-3">
+                <button onclick="changePassword()" class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl">Change Password</button>
+            `;
+        } else if (type === 'privacy') {
+            content.innerHTML = `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <span>Private Account</span>
+                    <input type="checkbox" class="toggle">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <span>Show Activity Status</span>
+                    <input type="checkbox" checked class="toggle">
+                </div>
+            `;
+        } else if (type === 'notifications') {
+            content.innerHTML = `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <span>Push Notifications</span>
+                    <input type="checkbox" checked class="toggle">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <span>Email Notifications</span>
+                    <input type="checkbox" checked class="toggle">
+                </div>
+            `;
+        } else if (type === 'help') {
+            content.innerHTML = `
+                <p class="text-gray-600 mb-4">Need help? Contact us:</p>
+                <a href="mailto:support@deeh.com" class="block p-3 bg-blue-50 text-blue-600 rounded-xl text-center">support@deeh.com</a>
+            `;
+        }
+        
+        modal.classList.remove('hidden');
+    };
+
+    window.closeSettingsModal = () => {
+        document.getElementById('settingsModal').classList.add('hidden');
+    };
+
+    // Update Profile Name
+    window.updateProfileName = async () => {
+        const newName = document.getElementById('editName').value;
+        if (!newName) return;
+        
+        showLoading(true);
+        await updateProfile(auth.currentUser, { displayName: newName });
+        document.getElementById('pName').innerText = newName.toUpperCase();
+        document.getElementById('pInitial').innerText = newName[0].toUpperCase();
+        showToast("Profile updated!");
+        closeSettingsModal();
+        showLoading(false);
+    };
+
+    // Change Password
+    window.changePassword = async () => {
+        const currentPass = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value;
+        
+        if (!currentPass || !newPass) {
+            showToast("Fill all fields", 'error');
+            return;
+        }
+        
+        showLoading(true);
+        try {
+            const credential = EmailAuthProvider.credential(currentUser.email, currentPass);
+            await reauthenticateWithCredential(currentUser, credential);
+            await updatePassword(currentUser, newPass);
+            showToast("Password updated!");
+            closeSettingsModal();
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            showLoading(false);
         }
     };
+
+    // Dark Mode Toggle
+    window.toggleDarkMode = () => {
+        const container = document.getElementById('appContainer');
+        container.classList.toggle('dark-mode');
+    };
+</script>
+
+<!-- Global functions -->
+<script>
+    window.showSection = (section) => window.showSection(section);
+    window.openModal = () => window.openModal();
+    window.closeModal = () => window.closeModal();
+    window.savePost = () => window.savePost();
+    window.logout = () => window.logout();
+    window.showLoginForm = () => window.toggleAuthTab('login');
+    window.showSignupForm = () => window.toggleAuthTab('signup');
 </script>
 
 </body>
