@@ -7,13 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.1); border-radius: 32px 32px 0 0; overflow: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f3f4f6; }
+        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
         .hidden { display: none !important; }
-        .active-tab { color: #4f46e5; border-bottom: 3px solid #4f46e5; font-weight: 700; }
-        .post-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; }
-        .post-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-        .like-btn.active { color: #ef4444; }
+        .active-tab { color: #3b82f6; border-bottom: 3px solid #3b82f6; font-weight: 700; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 1000; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
         .preview-image { width: 100%; max-height: 200px; object-fit: cover; border-radius: 15px; margin-top: 10px; }
@@ -21,21 +18,21 @@
 </head>
 <body>
 
-<div class="app-container pb-24" id="appContainer">
+<div class="app-container pb-24">
     <!-- Toast Notification -->
     <div id="toast" class="toast hidden"></div>
 
     <!-- AUTH PAGE -->
-    <div id="authPage" class="px-8 py-20 text-center min-h-screen flex flex-col justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20">
-            <h1 class="text-5xl font-extrabold text-white mb-2 drop-shadow-lg">Deeh</h1>
-            <p class="text-white/80 mb-10 text-sm">अपनी real दुनिया से जुड़ें</p>
+    <div id="authPage" class="px-8 py-20 text-center min-h-screen flex flex-col justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
+            <h1 class="text-5xl font-extrabold text-white mb-2">Deeh</h1>
+            <p class="text-white/80 mb-10">अपनी real दुनिया से जुड़ें</p>
             
             <form id="signupForm" class="space-y-4">
-                <input type="text" id="regName" placeholder="आपका नाम" required class="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white border border-white/30">
-                <input type="email" id="regEmail" placeholder="ईमेल" required class="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white border border-white/30">
-                <input type="password" id="regPassword" placeholder="पासवर्ड" required class="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white border border-white/30">
-                <button type="submit" class="w-full py-4 bg-white text-indigo-600 font-bold rounded-2xl text-lg shadow-xl hover:bg-indigo-50 transition transform hover:scale-105">
+                <input type="text" id="regName" placeholder="आपका नाम" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
+                <input type="email" id="regEmail" placeholder="ईमेल" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
+                <input type="password" id="regPassword" placeholder="पासवर्ड" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
+                <button type="submit" class="w-full py-4 bg-white text-blue-600 font-bold rounded-2xl text-lg shadow-xl hover:bg-blue-50">
                     Join Now 🚀
                 </button>
             </form>
@@ -45,14 +42,14 @@
     </div>
 
     <!-- LOGIN PAGE -->
-    <div id="loginPage" class="px-8 py-20 text-center min-h-screen flex flex-col justify-center hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20">
-            <h1 class="text-5xl font-extrabold text-white mb-10 drop-shadow-lg">Welcome Back! 👋</h1>
+    <div id="loginPage" class="px-8 py-20 text-center min-h-screen flex flex-col justify-center bg-gradient-to-r from-blue-500 to-purple-600 hidden">
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
+            <h1 class="text-5xl font-extrabold text-white mb-10">Welcome Back! 👋</h1>
             
             <form id="loginForm" class="space-y-4">
-                <input type="email" id="loginEmail" placeholder="ईमेल" required class="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white border border-white/30">
-                <input type="password" id="loginPassword" placeholder="पासवर्ड" required class="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white border border-white/30">
-                <button type="submit" class="w-full py-4 bg-white text-indigo-600 font-bold rounded-2xl text-lg shadow-xl hover:bg-indigo-50 transition transform hover:scale-105">
+                <input type="email" id="loginEmail" placeholder="ईमेल" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
+                <input type="password" id="loginPassword" placeholder="पासवर्ड" required class="w-full p-4 bg-white/20 text-white placeholder-white/70 rounded-2xl outline-none focus:ring-2 focus:ring-white">
+                <button type="submit" class="w-full py-4 bg-white text-blue-600 font-bold rounded-2xl text-lg shadow-xl hover:bg-blue-50">
                     Login 🔐
                 </button>
             </form>
@@ -64,70 +61,68 @@
     <!-- MAIN APP -->
     <div id="mainApp" class="hidden">
         <!-- Header -->
-        <header class="sticky top-0 z-50 bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 flex justify-between items-center text-white shadow-lg">
-            <h1 class="text-2xl font-extrabold italic tracking-wider">Deeh</h1>
-            <div class="flex items-center space-x-4">
-                <span id="onlineStatus" class="text-xs bg-green-400 text-green-900 px-2 py-1 rounded-full">● Online</span>
-                <button onclick="logout()" class="text-xs font-bold bg-white/20 backdrop-blur-sm px-4 py-2 rounded-xl hover:bg-white/30 transition">
-                    Logout
-                </button>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 text-white">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-extrabold">Dee</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm bg-green-400 text-green-900 px-3 py-1 rounded-full">● Online</span>
+                    <button onclick="logout()" class="text-sm bg-white/20 px-4 py-2 rounded-xl hover:bg-white/30">Logout</button>
+                </div>
             </div>
-        </header>
+        </div>
 
         <!-- Tabs -->
-        <div class="flex justify-around bg-white border-b sticky top-[73px] z-40 font-bold text-gray-600">
-            <button onclick="showSection('feed')" id="feedTab" class="py-3 px-8 active-tab">🏠 Circle</button>
-            <button onclick="showSection('profile')" id="profileTab" class="py-3 px-8 text-gray-400">👤 Profile</button>
+        <div class="flex justify-around bg-white border-b font-bold text-gray-600">
+            <button onclick="showSection('feed')" id="feedTab" class="py-3 px-8 active-tab">Circle</button>
+            <button onclick="showSection('profile')" id="profileTab" class="py-3 px-8 text-gray-400">Profile</button>
         </div>
 
         <!-- Feed Section -->
-        <div id="feedSection" class="p-4 space-y-4">
-            <div id="postsList" class="space-y-4 pt-2">
+        <div id="feedSection" class="p-4">
+            <div id="postsList" class="space-y-4">
                 <!-- Posts will load here -->
             </div>
         </div>
 
-        <!-- Profile Section -->
-        <div id="profileSection" class="hidden px-6 py-10 flex flex-col items-center bg-gradient-to-b from-indigo-50 to-white">
-            <div class="relative">
-                <div id="pInitial" class="w-24 h-24 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-xl border-4 border-white">D</div>
-                <span class="absolute bottom-4 right-0 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></span>
-            </div>
-            <h2 id="pName" class="text-2xl font-bold text-gray-800 uppercase">Dipak</h2>
-            <p id="pEmail" class="text-gray-400 text-xs italic mb-6">dipakpal73070@gmail.com</p>
-            
-            <div class="w-full space-y-4">
-                <div class="bg-white rounded-2xl p-6 text-center shadow-md border border-gray-100">
-                    <p class="text-4xl font-extrabold text-indigo-600" id="userPostCount">0</p>
-                    <p class="text-xs uppercase font-bold text-gray-400 mt-1">Total Posts</p>
+        <!-- Profile Section (Exactly like screenshot) -->
+        <div id="profileSection" class="hidden p-6">
+            <div class="text-center">
+                <!-- Profile Avatar -->
+                <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
+                    <span id="pInitial">D</span>
+                </div>
+                
+                <!-- Name and Email -->
+                <h2 id="pName" class="text-xl font-bold text-gray-800">DEEPAK</h2>
+                <p id="pEmail" class="text-gray-500 text-sm mb-6">dipakpal73070@gmail.com</p>
+                
+                <!-- Total Posts Card -->
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <p class="text-3xl font-bold text-blue-600" id="userPostCount">0</p>
+                    <p class="text-sm text-gray-500 mt-1">TOTAL POSTS</p>
                 </div>
             </div>
         </div>
 
         <!-- Post Modal with Image Upload -->
-        <div id="postModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
-            <div class="w-full max-w-[400px] bg-white rounded-[32px] p-6 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-indigo-600">नई पोस्ट लिखें 📝</h3>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">✕</button>
-                </div>
+        <div id="postModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
+            <div class="w-full bg-white rounded-2xl p-6">
+                <h3 class="text-xl font-bold text-blue-600 mb-4">नई पोस्ट लिखें 📝</h3>
                 
-                <textarea id="postText" class="w-full h-40 p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 mb-4 resize-none" placeholder="क्या चल रहा है आपके मन में?"></textarea>
+                <textarea id="postText" class="w-full h-32 p-3 bg-gray-50 rounded-xl border border-gray-200 mb-4" placeholder="क्या चल रहा है?"></textarea>
                 
-                <!-- Image Upload Section -->
+                <!-- Image Upload -->
                 <div class="mb-4">
-                    <label for="postImage" class="block text-sm font-medium text-gray-700 mb-2">
-                        📸 फोटो जोड़ें (optional)
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">📸 फोटो डालें</label>
                     <input type="file" id="postImage" accept="image/*" class="w-full p-2 bg-gray-50 rounded-xl border border-gray-200">
                     <div id="imagePreview" class="mt-2 hidden"></div>
                 </div>
                 
-                <div class="flex space-x-3">
-                    <button onclick="savePost()" class="flex-1 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition">
+                <div class="flex space-x-2">
+                    <button onclick="savePost()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl">
                         Publish 🚀
                     </button>
-                    <button onclick="closeModal()" class="px-6 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition">
+                    <button onclick="closeModal()" class="px-6 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl">
                         Cancel
                     </button>
                 </div>
@@ -135,11 +130,11 @@
         </div>
 
         <!-- Bottom Navigation -->
-        <nav class="fixed bottom-0 w-full max-w-[450px] bg-white/90 backdrop-blur-md border-t px-12 py-4 flex justify-between items-center rounded-t-[32px] shadow-2xl z-50">
-            <button onclick="showSection('feed')" class="text-3xl hover:text-indigo-600 transition" id="navHome">🏠</button>
-            <button onclick="openModal()" class="w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl text-white text-3xl shadow-lg transform translate-y-[-20px] hover:rotate-90 transition duration-300">+</button>
-            <button onclick="showSection('profile')" class="text-3xl hover:text-indigo-600 transition" id="navProfile">👤</button>
-        </nav>
+        <div class="fixed bottom-0 w-full max-w-[450px] bg-white border-t px-12 py-3 flex justify-between items-center">
+            <button onclick="showSection('feed')" class="text-2xl" id="navHome">🏠</button>
+            <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-white text-2xl shadow-lg -mt-8">+</button>
+            <button onclick="showSection('profile')" class="text-2xl" id="navProfile">👤</button>
+        </div>
     </div>
 </div>
 
@@ -175,28 +170,25 @@
         getStorage,
         ref,
         uploadBytes,
-        getDownloadURL,
-        deleteObject
+        getDownloadURL
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    // 🔥 FIREBASE CONFIG
+    // 🔥 FIREBASE CONFIG - APNA CONFIG YAHAN DALO
     const firebaseConfig = {
         apiKey: "AIzaSyBmwtDM6mget0nZhkGA0D-cUhMrgMd4LQs",
         authDomain: "deeh-e87bf.firebaseapp.com",
-        databaseURL: "https://deeh-e87bf-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "deeh-e87bf",
         storageBucket: "deeh-e87bf.firebasestorage.app",
         messagingSenderId: "618337488833",
         appId: "1:618337488833:web:a0a9fdb3df462e6fc1a940"
     };
 
-    // 🔥 INITIALIZE FIREBASE
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // Global Variables
     let currentUser = null;
     let unsubscribePosts = null;
 
@@ -209,7 +201,7 @@
         setTimeout(() => toast.classList.add('hidden'), 3000);
     }
 
-    // Show Login Form
+    // Global functions
     window.showLoginForm = function() {
         document.getElementById('authPage').classList.add('hidden');
         document.getElementById('loginPage').classList.remove('hidden');
@@ -220,7 +212,7 @@
         document.getElementById('authPage').classList.remove('hidden');
     };
 
-    // Signup Form
+    // Signup
     document.getElementById('signupForm').onsubmit = async (e) => {
         e.preventDefault();
         const name = document.getElementById('regName').value;
@@ -230,13 +222,13 @@
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(res.user, { displayName: name });
-            showToast('Account created! Welcome to Deeh! 🎉');
+            showToast('Account created! 🎉');
         } catch (err) {
             showToast(err.message, 'error');
         }
     };
 
-    // Login Form
+    // Login
     document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
@@ -250,7 +242,7 @@
         }
     };
 
-    // Auth State Observer
+    // Auth State
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
@@ -259,35 +251,24 @@
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             
-            // Update profile UI
-            document.getElementById('pName').innerText = user.displayName || 'User';
+            document.getElementById('pName').innerText = (user.displayName || 'User').toUpperCase();
             document.getElementById('pEmail').innerText = user.email;
             document.getElementById('pInitial').innerText = (user.displayName || 'U')[0].toUpperCase();
             
-            // Load posts
             loadPosts();
-            
-            // Load user post count
             await loadUserPostCount(user.uid);
         } else {
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('authPage').classList.remove('hidden');
-            
-            if (unsubscribePosts) {
-                unsubscribePosts();
-            }
+            if (unsubscribePosts) unsubscribePosts();
         }
     });
 
-    // Load User Post Count
+    // Load Post Count
     async function loadUserPostCount(uid) {
-        try {
-            const q = query(collection(db, "posts"), where("userId", "==", uid));
-            const snapshot = await getDocs(q);
-            document.getElementById('userPostCount').textContent = snapshot.size;
-        } catch (err) {
-            console.error("Error loading post count:", err);
-        }
+        const q = query(collection(db, "posts"), where("userId", "==", uid));
+        const snapshot = await getDocs(q);
+        document.getElementById('userPostCount').textContent = snapshot.size;
     }
 
     // Image Preview
@@ -308,7 +289,7 @@
         }
     });
 
-    // Save Post Function
+    // Save Post
     window.savePost = async function() {
         const text = document.getElementById('postText').value.trim();
         const imageFile = document.getElementById('postImage').files[0];
@@ -321,29 +302,23 @@
         try {
             let imageUrl = null;
             
-            // Upload image if exists
             if (imageFile) {
                 const storageRef = ref(storage, `posts/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
                 const snapshot = await uploadBytes(storageRef, imageFile);
                 imageUrl = await getDownloadURL(snapshot.ref);
             }
 
-            // Save post to Firestore
-            const postData = {
+            await addDoc(collection(db, "posts"), {
                 content: text,
                 userId: currentUser.uid,
                 userName: currentUser.displayName || 'User',
-                userEmail: currentUser.email,
                 imageUrl: imageUrl,
                 timestamp: serverTimestamp(),
                 likes: 0,
                 likedBy: [],
                 comments: []
-            };
-
-            await addDoc(collection(db, "posts"), postData);
+            });
             
-            // Clear form and close modal
             document.getElementById('postText').value = '';
             document.getElementById('postImage').value = '';
             document.getElementById('imagePreview').innerHTML = '';
@@ -351,17 +326,14 @@
             closeModal();
             
             showToast('पोस्ट हो गई! 🎉');
-            
-            // Update post count
             await loadUserPostCount(currentUser.uid);
             
         } catch (err) {
-            console.error("Error saving post:", err);
             showToast('Error: ' + err.message, 'error');
         }
     };
 
-    // Load Posts Function
+    // Load Posts
     function loadPosts() {
         const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
         
@@ -369,7 +341,7 @@
             const list = document.getElementById('postsList');
             
             if (snapshot.empty) {
-                list.innerHTML = '<div class="text-center py-16"><p class="text-gray-400 mb-4">कोई पोस्ट नहीं है</p><button onclick="openModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl">पहली पोस्ट करें 🚀</button></div>';
+                list.innerHTML = '<div class="text-center py-16 text-gray-500">कोई पोस्ट नहीं है</div>';
                 return;
             }
 
@@ -378,61 +350,33 @@
                 const post = doc.data();
                 const postId = doc.id;
                 const isLiked = post.likedBy?.includes(currentUser?.uid) || false;
-                const timestamp = post.timestamp?.toDate?.() || new Date();
+                const time = post.timestamp?.toDate?.() || new Date();
                 
                 postsHTML += `
-                    <div class="post-card bg-white border border-gray-100 rounded-[24px] p-5 shadow-sm" id="post-${postId}">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
-                                    ${post.userName?.[0] || 'U'}
-                                </div>
-                                <div>
-                                    <p class="font-bold text-sm text-gray-800">${post.userName || 'Unknown'}</p>
-                                    <p class="text-xs text-gray-400">${timestamp.toLocaleString()}</p>
-                                </div>
+                    <div class="bg-white border rounded-xl p-4">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+                                ${post.userName?.[0] || 'U'}
                             </div>
-                            ${post.userId === currentUser?.uid ? `
-                                <button onclick="deletePost('${postId}')" class="text-gray-400 hover:text-red-500 transition">
-                                    🗑️
-                                </button>
-                            ` : ''}
+                            <div>
+                                <p class="font-bold text-sm">${post.userName}</p>
+                                <p class="text-xs text-gray-400">${time.toLocaleString()}</p>
+                            </div>
                         </div>
                         
-                        <p class="text-gray-700 leading-relaxed text-sm mb-4">${post.content || ''}</p>
+                        <p class="text-gray-700 mb-2">${post.content || ''}</p>
                         
-                        ${post.imageUrl ? `
-                            <img src="${post.imageUrl}" class="w-full rounded-xl mb-4 max-h-60 object-cover">
-                        ` : ''}
+                        ${post.imageUrl ? `<img src="${post.imageUrl}" class="w-full rounded-lg mb-2 max-h-60 object-cover">` : ''}
                         
-                        <div class="flex items-center justify-between border-t pt-4">
-                            <button onclick="likePost('${postId}')" class="flex items-center space-x-2 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
-                                <span class="text-xl">❤️</span>
-                                <span class="text-sm font-medium">${post.likes || 0}</span>
+                        <div class="flex items-center space-x-4 pt-2 border-t">
+                            <button onclick="likePost('${postId}')" class="flex items-center space-x-1 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
+                                <span>❤️</span>
+                                <span class="text-sm">${post.likes || 0}</span>
                             </button>
-                            
-                            <button onclick="toggleComments('${postId}')" class="flex items-center space-x-2 text-gray-400 hover:text-indigo-600 transition">
-                                <span class="text-xl">💬</span>
-                                <span class="text-sm font-medium">${post.comments?.length || 0}</span>
+                            <button onclick="toggleComments('${postId}')" class="flex items-center space-x-1 text-gray-400">
+                                <span>💬</span>
+                                <span class="text-sm">${post.comments?.length || 0}</span>
                             </button>
-                        </div>
-                        
-                        <!-- Comments Section -->
-                        <div id="comments-${postId}" class="hidden mt-4">
-                            <div class="flex space-x-2 mb-3">
-                                <input type="text" id="comment-${postId}" placeholder="कोई टिप्पणी लिखें..." class="flex-1 p-2 bg-gray-50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
-                                <button onclick="addComment('${postId}')" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 transition">
-                                    भेजें
-                                </button>
-                            </div>
-                            <div id="comments-list-${postId}" class="space-y-2 max-h-48 overflow-y-auto">
-                                ${post.comments?.map(comment => `
-                                    <div class="bg-gray-50 p-3 rounded-xl">
-                                        <p class="text-xs font-bold text-gray-700">${comment.userName}</p>
-                                        <p class="text-sm text-gray-600">${comment.text}</p>
-                                    </div>
-                                `).join('') || ''}
-                            </div>
                         </div>
                     </div>
                 `;
@@ -445,134 +389,43 @@
     // Like Post
     window.likePost = async (postId) => {
         const postRef = doc(db, "posts", postId);
+        const postSnapshot = await getDocs(query(collection(db, "posts"), where("__name__", "==", postId)));
+        const post = postSnapshot.docs[0]?.data();
         
-        try {
-            const postSnapshot = await getDocs(query(collection(db, "posts"), where("__name__", "==", postId)));
-            const post = postSnapshot.docs[0]?.data();
-            
-            if (post?.likedBy?.includes(currentUser.uid)) {
-                await updateDoc(postRef, {
-                    likes: increment(-1),
-                    likedBy: arrayRemove(currentUser.uid)
-                });
-            } else {
-                await updateDoc(postRef, {
-                    likes: increment(1),
-                    likedBy: arrayUnion(currentUser.uid)
-                });
-            }
-        } catch (err) {
-            console.error("Error liking post:", err);
+        if (post?.likedBy?.includes(currentUser.uid)) {
+            await updateDoc(postRef, { likes: increment(-1), likedBy: arrayRemove(currentUser.uid) });
+        } else {
+            await updateDoc(postRef, { likes: increment(1), likedBy: arrayUnion(currentUser.uid) });
         }
     };
 
-    // Add Comment
-    window.addComment = async (postId) => {
-        const commentInput = document.getElementById(`comment-${postId}`);
-        const commentText = commentInput.value.trim();
-        
-        if (!commentText) return;
-        
-        const postRef = doc(db, "posts", postId);
-        
-        try {
-            await updateDoc(postRef, {
-                comments: arrayUnion({
-                    userId: currentUser.uid,
-                    userName: currentUser.displayName || 'User',
-                    text: commentText,
-                    timestamp: new Date().toISOString()
-                })
-            });
-            
-            commentInput.value = "";
-            showToast("टिप्पणी जुड़ गई!");
-            
-        } catch (err) {
-            showToast("Error: " + err.message, 'error');
-        }
-    };
-
-    // Delete Post
-    window.deletePost = async (postId) => {
-        if (!confirm("क्या आप यह पोस्ट हटाना चाहते हैं?")) return;
-        
-        try {
-            await deleteDoc(doc(db, "posts", postId));
-            showToast("पोस्ट हट गई");
-            await loadUserPostCount(currentUser.uid);
-        } catch (err) {
-            showToast("Error: " + err.message, 'error');
-        }
-    };
-
-    // Toggle Comments
     window.toggleComments = (postId) => {
-        const commentsDiv = document.getElementById(`comments-${postId}`);
-        if (commentsDiv) {
-            commentsDiv.classList.toggle('hidden');
-        }
+        // Comments functionality
     };
 
-    // Logout
-    window.logout = () => {
-        signOut(auth);
-        showToast("Logged out successfully");
-    };
+    window.logout = () => signOut(auth);
 
-    // Modal Functions
-    window.openModal = () => {
-        document.getElementById('postModal').classList.remove('hidden');
-    };
+    window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
+    window.closeModal = () => document.getElementById('postModal').classList.add('hidden');
 
-    window.closeModal = () => {
-        document.getElementById('postModal').classList.add('hidden');
-        document.getElementById('postText').value = '';
-        document.getElementById('postImage').value = '';
-        document.getElementById('imagePreview').innerHTML = '';
-        document.getElementById('imagePreview').classList.add('hidden');
-    };
-
-    // Section Toggle
     window.showSection = (section) => {
-        const feedSection = document.getElementById('feedSection');
-        const profileSection = document.getElementById('profileSection');
+        const feed = document.getElementById('feedSection');
+        const profile = document.getElementById('profileSection');
         const feedTab = document.getElementById('feedTab');
         const profileTab = document.getElementById('profileTab');
-        const navHome = document.getElementById('navHome');
-        const navProfile = document.getElementById('navProfile');
         
         if (section === 'feed') {
-            feedSection.classList.remove('hidden');
-            profileSection.classList.add('hidden');
+            feed.classList.remove('hidden');
+            profile.classList.add('hidden');
             feedTab.classList.add('active-tab');
             profileTab.classList.remove('active-tab');
-            feedTab.classList.remove('text-gray-400');
-            profileTab.classList.add('text-gray-400');
-            navHome.style.color = '#4f46e5';
-            navProfile.style.color = '#9ca3af';
         } else {
-            feedSection.classList.add('hidden');
-            profileSection.classList.remove('hidden');
+            feed.classList.add('hidden');
+            profile.classList.remove('hidden');
             feedTab.classList.remove('active-tab');
             profileTab.classList.add('active-tab');
-            feedTab.classList.add('text-gray-400');
-            profileTab.classList.remove('text-gray-400');
-            navHome.style.color = '#9ca3af';
-            navProfile.style.color = '#4f46e5';
         }
     };
-</script>
-
-<!-- Global functions -->
-<script>
-    function showLoginForm() { window.showLoginForm(); }
-    function showSignupForm() { window.showSignupForm(); }
-    function openModal() { window.openModal(); }
-    function closeModal() { window.closeModal(); }
-    function savePost() { window.savePost(); }
-    function logout() { window.logout(); }
-    function showSection(section) { window.showSection(section); }
 </script>
 
 </body>
