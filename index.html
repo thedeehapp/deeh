@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Deeh – Your Private Social</title>
-    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ========== RESET & VARIABLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
         :root {
             --bg-primary: #f5f7fa;
             --bg-secondary: #ffffff;
@@ -19,7 +24,6 @@
             --danger: #ef4444;
             --success: #10b981;
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --nav-height: 60px;
         }
 
         .dark-mode {
@@ -32,14 +36,7 @@
             --border: #334155;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             transition: background-color 0.3s, color 0.3s;
@@ -54,7 +51,6 @@
             position: relative;
         }
 
-        /* ========== NAVBAR ========== */
         .navbar {
             background: var(--bg-secondary);
             padding: 0.75rem 1rem;
@@ -93,13 +89,11 @@
             color: var(--accent);
         }
 
-        /* ========== MAIN CONTENT ========== */
         main {
             padding: 1rem;
             padding-bottom: calc(80px + 1rem);
         }
 
-        /* ========== BOTTOM NAV ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -125,14 +119,96 @@
             color: var(--accent);
         }
 
-        /* ========== POST CARD ========== */
+        .create-post {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .create-post textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: none;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .create-post button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.6rem 2rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            float: right;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: var(--border);
+            color: var(--text-primary);
+            border-radius: 2rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .file-input-label i {
+            margin-right: 0.3rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .media-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .media-preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .media-preview-item img,
+        .media-preview-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .remove-media {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
         .post {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: 1rem;
             padding: 1rem;
             margin-bottom: 1.5rem;
-            transition: transform 0.2s;
         }
 
         .post-header {
@@ -162,7 +238,6 @@
 
         .post-username {
             font-weight: 600;
-            color: var(--text-primary);
         }
 
         .post-time {
@@ -171,10 +246,14 @@
         }
 
         .post-content {
-            font-size: 1rem;
-            line-height: 1.5;
             margin-bottom: 0.75rem;
             white-space: pre-wrap;
+        }
+
+        .post-media {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 10px 0;
         }
 
         .post-stats {
@@ -213,7 +292,6 @@
             color: #ef4444;
         }
 
-        /* ========== COMMENTS ========== */
         .comments-section {
             margin-top: 1rem;
             padding-top: 1rem;
@@ -252,10 +330,6 @@
             color: var(--accent);
         }
 
-        .comment-text {
-            color: var(--text-primary);
-        }
-
         .add-comment {
             display: flex;
             gap: 0.5rem;
@@ -280,39 +354,6 @@
             cursor: pointer;
         }
 
-        /* ========== CREATE POST ========== */
-        .create-post {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .create-post textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 1rem;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            resize: none;
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .create-post button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 0.6rem 2rem;
-            border-radius: 2rem;
-            font-size: 1rem;
-            cursor: pointer;
-            float: right;
-        }
-
-        /* ========== SEARCH BAR ========== */
         .search-bar {
             display: flex;
             align-items: center;
@@ -357,7 +398,6 @@
             background: var(--border);
         }
 
-        /* ========== PROFILE ========== */
         .profile-header {
             text-align: center;
             margin-bottom: 2rem;
@@ -414,7 +454,6 @@
             color: var(--text-primary);
         }
 
-        /* ========== SETTINGS ========== */
         .settings-tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
@@ -534,73 +573,101 @@
 </head>
 <body>
     <div id="app">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="logo" onclick="changeView('feed')">Deeh</div>
             <div class="nav-links" id="navLinks"></div>
         </nav>
-
-        <!-- Main Content -->
         <main id="mainContent"></main>
-
-        <!-- Bottom Navigation -->
         <div class="bottom-nav" id="bottomNav"></div>
     </div>
 
     <script>
-        // ========== GLOBAL STATE ==========
+        // ========== CONFIG ==========
+        const API_BASE = 'http://localhost:5000/api';  // CHANGE THIS TO YOUR BACKEND URL
+
+        // ========== STATE ==========
         let currentUser = null;
-        let currentView = 'feed';          // feed, search, profile, settings, userProfile
-        let viewingUserId = null;           // for viewing other profiles
+        let currentView = 'feed';
+        let viewingUserId = null;
         let darkMode = false;
-        let settingsTab = 'account';        // current settings tab
+        let settingsTab = 'account';
+        let users = [];          // array of user objects from backend
+        let posts = [];          // array of post objects from backend
 
-        // ========== DATA (localStorage se load/save) ==========
-        let users = {};      // key: username, value: user object
-        let posts = [];
+        // For create post media
+        let selectedFiles = [];   // array of File objects
 
-        // Initialize default data if localStorage empty
-        function initData() {
-            if (!localStorage.getItem('deeh_users')) {
-                // Default users
-                users = {
-                    'alice': { username: 'alice', name: 'Alice', avatar: 'A', email: 'alice@example.com', bio: 'Digital artist ✨', followers: ['bob'], following: ['bob', 'charlie'], privacy: { public: true, messages: 'everyone' } },
-                    'bob': { username: 'bob', name: 'Bob', avatar: 'B', email: 'bob@example.com', bio: 'Privacy advocate 🔒', followers: ['alice', 'charlie'], following: ['alice'], privacy: { public: true, messages: 'everyone' } },
-                    'charlie': { username: 'charlie', name: 'Charlie', avatar: 'C', email: 'charlie@example.com', bio: 'Developer 🚀', followers: ['bob'], following: ['alice'], privacy: { public: false, messages: 'followers' } }
-                };
-
-                // Default posts
-                posts = [
-                    { id: 1, userId: 'alice', content: 'Hello Deeh! This is my first post. Excited to be here! 🎉', time: '2025-03-19T10:00:00Z', likes: 5, likedBy: ['bob'], comments: [{ id: 101, userId: 'bob', text: 'Welcome Alice! 👋' }], shares: 1 },
-                    { id: 2, userId: 'bob', content: 'Privacy first social network is finally here! No tracking, no data selling. Just pure connection. 🔒', time: '2025-03-19T09:45:00Z', likes: 12, likedBy: ['alice', 'charlie'], comments: [{ id: 102, userId: 'alice', text: 'Love this concept!' }, { id: 103, userId: 'charlie', text: 'Finally a platform I can trust.' }], shares: 3 },
-                    { id: 3, userId: 'charlie', content: 'Working on some exciting features for Deeh. Stay tuned! 🚀', time: '2025-03-19T08:30:00Z', likes: 8, likedBy: ['bob'], comments: [{ id: 104, userId: 'bob', text: 'Can\'t wait to see!' }], shares: 0 }
-                ];
-
-                saveData();
-            } else {
-                loadData();
-            }
-        }
-
-        function saveData() {
-            localStorage.setItem('deeh_users', JSON.stringify(users));
-            localStorage.setItem('deeh_posts', JSON.stringify(posts));
-            if (currentUser) {
-                localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
-            }
-        }
-
-        function loadData() {
-            users = JSON.parse(localStorage.getItem('deeh_users')) || {};
-            posts = JSON.parse(localStorage.getItem('deeh_posts')) || [];
-            const savedUser = localStorage.getItem('deeh_current_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-            }
+        // ========== INIT ==========
+        async function init() {
+            // Load dark mode preference
             const savedDarkMode = localStorage.getItem('deeh_dark_mode');
             if (savedDarkMode === 'true') {
                 darkMode = true;
                 document.body.classList.add('dark-mode');
+            }
+            // Load accent color
+            const savedAccent = localStorage.getItem('deeh_accent_color');
+            if (savedAccent) {
+                document.documentElement.style.setProperty('--accent', savedAccent);
+            }
+
+            // Check token
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        currentUser = data.user;
+                        await loadAllData();
+                        changeView('feed');
+                    } else {
+                        localStorage.removeItem('deeh_token');
+                        showLogin();
+                    }
+                } catch (err) {
+                    console.warn('Backend not reachable, using demo mode');
+                    // Fallback to demo data
+                    loadDemoData();
+                    const savedUser = localStorage.getItem('deeh_current_user');
+                    if (savedUser) {
+                        currentUser = JSON.parse(savedUser);
+                        changeView('feed');
+                    } else {
+                        showLogin();
+                    }
+                }
+            } else {
+                showLogin();
+            }
+        }
+
+        function loadDemoData() {
+            users = {
+                'alice': { username: 'alice', name: 'Alice', avatar: 'A', email: 'alice@example.com', bio: 'Digital artist ✨', followers: ['bob'], following: ['bob', 'charlie'] },
+                'bob': { username: 'bob', name: 'Bob', avatar: 'B', email: 'bob@example.com', bio: 'Privacy advocate 🔒', followers: ['alice', 'charlie'], following: ['alice'] },
+                'charlie': { username: 'charlie', name: 'Charlie', avatar: 'C', email: 'charlie@example.com', bio: 'Developer 🚀', followers: ['bob'], following: ['alice'] }
+            };
+            posts = [
+                { id: 1, userId: 'alice', content: 'Hello Deeh!', media: [], time: new Date().toISOString(), likes: 5, likedBy: ['bob'], comments: [], shares: 0 },
+                { id: 2, userId: 'bob', content: 'Privacy first!', media: [], time: new Date().toISOString(), likes: 12, likedBy: ['alice','charlie'], comments: [], shares: 0 },
+                { id: 3, userId: 'charlie', content: 'Building features!', media: [], time: new Date().toISOString(), likes: 8, likedBy: ['bob'], comments: [], shares: 0 }
+            ];
+        }
+
+        async function loadAllData() {
+            try {
+                const [usersRes, postsRes] = await Promise.all([
+                    fetch(`${API_BASE}/users`),
+                    fetch(`${API_BASE}/posts`)
+                ]);
+                if (usersRes.ok) users = await usersRes.json();
+                if (postsRes.ok) posts = await postsRes.json();
+            } catch (e) {
+                console.warn('Using demo data');
+                loadDemoData();
             }
         }
 
@@ -619,8 +686,12 @@
             return diffDays + 'd ago';
         }
 
-        function getCurrentUserObject() {
-            return currentUser ? users[currentUser.username] : null;
+        function getUserByUsername(username) {
+            if (Array.isArray(users)) {
+                return users.find(u => u.username === username);
+            } else {
+                return users[username]; // for object format
+            }
         }
 
         function renderNav() {
@@ -691,16 +762,34 @@
                     </form>
                 </div>
             `;
-            document.getElementById('loginForm').addEventListener('submit', (e) => {
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const username = document.getElementById('loginUsername').value.trim();
-                const password = document.getElementById('loginPassword').value; // dummy check
-                if (username && password && users[username]) {
-                    currentUser = { username, name: users[username].name, email: users[username].email };
-                    localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
-                    changeView('feed');
-                } else {
-                    alert('Invalid username or password (try alice/bob/charlie with any password)');
+                const password = document.getElementById('loginPassword').value;
+                try {
+                    const res = await fetch(`${API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        localStorage.setItem('deeh_token', data.token);
+                        currentUser = data.user;
+                        await loadAllData();
+                        changeView('feed');
+                    } else {
+                        alert(data.msg || 'Login failed');
+                    }
+                } catch (err) {
+                    // Fallback to demo login
+                    if (users[username]) {
+                        currentUser = { username, name: users[username].name, email: users[username].email };
+                        localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+                        changeView('feed');
+                    } else {
+                        alert('Invalid credentials');
+                    }
                 }
             });
         }
@@ -735,37 +824,47 @@
                     </form>
                 </div>
             `;
-            document.getElementById('registerForm').addEventListener('submit', (e) => {
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('regName').value.trim();
                 const username = document.getElementById('regUsername').value.trim();
                 const email = document.getElementById('regEmail').value.trim();
                 const password = document.getElementById('regPassword').value;
 
-                if (users[username]) {
-                    alert('Username already taken');
-                    return;
+                try {
+                    const res = await fetch(`${API_BASE}/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, name, email, password })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        localStorage.setItem('deeh_token', data.token);
+                        currentUser = data.user;
+                        await loadAllData();
+                        changeView('feed');
+                    } else {
+                        alert(data.msg || 'Registration failed');
+                    }
+                } catch (err) {
+                    // Fallback demo register
+                    if (users[username]) {
+                        alert('Username already taken');
+                        return;
+                    }
+                    const newUser = {
+                        username, name, email, avatar: name.charAt(0).toUpperCase(), bio: '', followers: [], following: []
+                    };
+                    users[username] = newUser;
+                    currentUser = { username, name, email };
+                    localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+                    changeView('feed');
                 }
-
-                const newUser = {
-                    username,
-                    name,
-                    avatar: name.charAt(0).toUpperCase(),
-                    email,
-                    bio: '',
-                    followers: [],
-                    following: [],
-                    privacy: { public: true, messages: 'everyone' }
-                };
-                users[username] = newUser;
-                currentUser = { username, name, email };
-                localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
-                saveData();
-                changeView('feed');
             });
         }
 
         function logout() {
+            localStorage.removeItem('deeh_token');
             localStorage.removeItem('deeh_current_user');
             currentUser = null;
             showLogin();
@@ -775,79 +874,161 @@
         function showFeed() {
             currentView = 'feed';
             renderNav();
-            let html = `
+            document.getElementById('mainContent').innerHTML = `
                 <div class="create-post clearfix">
-                    <textarea id="newPostContent" placeholder="What's on your mind, ${currentUser.name}?"></textarea>
+                    <textarea id="newPostContent" placeholder="What's on your mind, ${currentUser?.name}?"></textarea>
+                    <div class="media-preview" id="mediaPreview"></div>
+                    <label class="file-input-label" for="fileInput"><i class="fas fa-camera"></i> Add Media</label>
+                    <input type="file" id="fileInput" accept="image/*,video/*" multiple onchange="handleFileSelect(event)">
                     <button onclick="createPost()">Post</button>
                 </div>
                 <div id="postsContainer"></div>
             `;
-            document.getElementById('mainContent').innerHTML = html;
             renderPosts();
+        }
+
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            selectedFiles = selectedFiles.concat(files);
+            updateMediaPreview();
+        }
+
+        function updateMediaPreview() {
+            const preview = document.getElementById('mediaPreview');
+            if (!preview) return;
+            preview.innerHTML = selectedFiles.map((file, index) => {
+                const url = URL.createObjectURL(file);
+                const isImage = file.type.startsWith('image/');
+                return `
+                    <div class="media-preview-item">
+                        ${isImage ? `<img src="${url}">` : `<video src="${url}"></video>`}
+                        <button class="remove-media" onclick="removeMedia(${index})">×</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function removeMedia(index) {
+            selectedFiles.splice(index, 1);
+            updateMediaPreview();
+        }
+
+        async function createPost() {
+            const content = document.getElementById('newPostContent')?.value.trim() || '';
+            if (!content && selectedFiles.length === 0) return;
+
+            const formData = new FormData();
+            formData.append('userId', currentUser.username);
+            formData.append('content', content);
+            selectedFiles.forEach(file => formData.append('media', file));
+
+            try {
+                const token = localStorage.getItem('deeh_token');
+                const res = await fetch(`${API_BASE}/posts`, {
+                    method: 'POST',
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+                    body: formData
+                });
+                if (res.ok) {
+                    const newPost = await res.json();
+                    posts.unshift(newPost);
+                    selectedFiles = [];
+                    showFeed();
+                } else {
+                    alert('Failed to create post');
+                }
+            } catch (err) {
+                // Fallback: create post locally with base64 (not for production)
+                const newPost = {
+                    id: Date.now(),
+                    userId: currentUser.username,
+                    content,
+                    media: await Promise.all(selectedFiles.map(async file => ({
+                        type: file.type.startsWith('image/') ? 'image' : 'video',
+                        dataUrl: await fileToDataURL(file)
+                    }))),
+                    time: new Date().toISOString(),
+                    likes: 0,
+                    likedBy: [],
+                    comments: [],
+                    shares: 0
+                };
+                posts.unshift(newPost);
+                selectedFiles = [];
+                showFeed();
+            }
+        }
+
+        function fileToDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
         }
 
         function renderPosts() {
             const container = document.getElementById('postsContainer');
             if (!container) return;
 
-            // Sort posts by time descending
             const sortedPosts = [...posts].sort((a, b) => new Date(b.time) - new Date(a.time));
-
-            let postsHtml = '';
+            let html = '';
             sortedPosts.forEach(post => {
-                const user = users[post.userId];
-                if (!user) return;
-                const isLiked = post.likedBy.includes(currentUser.username);
-                const timeAgo = formatTime(post.time);
-                postsHtml += `
-                    <div class="post" id="post-${post.id}">
+                const user = getUserByUsername(post.userId) || { name: post.userId, avatar: post.userId.charAt(0) };
+                const isLiked = post.likedBy?.includes(currentUser?.username);
+                html += `
+                    <div class="post">
                         <div class="post-header" onclick="viewUserProfile('${post.userId}')">
-                            <div class="post-avatar">${user.avatar}</div>
+                            <div class="post-avatar">${user.avatar || 'U'}</div>
                             <div class="post-user-info">
-                                <div class="post-username">${user.name}</div>
-                                <div class="post-time">${timeAgo}</div>
+                                <div class="post-username">${user.name || post.userId}</div>
+                                <div class="post-time">${formatTime(post.time)}</div>
                             </div>
                         </div>
                         <div class="post-content">${post.content}</div>
+                        ${post.media ? post.media.map(m => 
+                            m.type === 'image' 
+                                ? `<img src="${m.dataUrl || (API_BASE + m.url)}" class="post-media">`
+                                : `<video src="${m.dataUrl || (API_BASE + m.url)}" controls class="post-media"></video>`
+                        ).join('') : ''}
                         <div class="post-stats">
-                            <span><i class="fas fa-heart" style="color:#ef4444;"></i> ${post.likes} likes</span>
-                            <span><i class="fas fa-comment"></i> ${post.comments.length} comments</span>
-                            <span><i class="fas fa-share"></i> ${post.shares} shares</span>
+                            <span><i class="fas fa-heart" style="color:#ef4444;"></i> ${post.likes}</span>
+                            <span><i class="fas fa-comment"></i> ${post.comments?.length || 0}</span>
+                            <span><i class="fas fa-share"></i> ${post.shares || 0}</span>
                         </div>
                         <div class="post-actions">
-                            <div class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                            <div class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post._id || post.id}')">
                                 <i class="fas fa-heart"></i> Like
                             </div>
-                            <div class="post-action" onclick="toggleComments(${post.id})">
+                            <div class="post-action" onclick="toggleComments('${post._id || post.id}')">
                                 <i class="fas fa-comment"></i> Comment
                             </div>
-                            <div class="post-action" onclick="sharePost(${post.id})">
+                            <div class="post-action" onclick="sharePost('${post._id || post.id}')">
                                 <i class="fas fa-share"></i> Share
                             </div>
                         </div>
-                        <div class="comments-section hidden" id="comments-${post.id}">
+                        <div class="comments-section hidden" id="comments-${post._id || post.id}">
                             ${renderComments(post.comments)}
                             <div class="add-comment">
-                                <input type="text" id="comment-input-${post.id}" placeholder="Write a comment...">
-                                <button onclick="addComment(${post.id})">Post</button>
+                                <input type="text" id="comment-input-${post._id || post.id}" placeholder="Write a comment...">
+                                <button onclick="addComment('${post._id || post.id}')">Post</button>
                             </div>
                         </div>
                     </div>
                 `;
             });
-            container.innerHTML = postsHtml;
+            container.innerHTML = html;
         }
 
         function renderComments(comments) {
             if (!comments || comments.length === 0) return '<p style="color:var(--text-secondary); text-align:center;">No comments yet.</p>';
             return comments.map(c => {
-                const commentUser = users[c.userId];
-                if (!commentUser) return '';
+                const commentUser = getUserByUsername(c.userId);
                 return `
                     <div class="comment">
-                        <div class="comment-avatar" onclick="viewUserProfile('${c.userId}')">${commentUser.avatar}</div>
+                        <div class="comment-avatar" onclick="viewUserProfile('${c.userId}')">${commentUser?.avatar || c.userId.charAt(0)}</div>
                         <div class="comment-content">
-                            <div class="comment-user" onclick="viewUserProfile('${c.userId}')">${commentUser.name}</div>
+                            <div class="comment-user" onclick="viewUserProfile('${c.userId}')">${commentUser?.name || c.userId}</div>
                             <div class="comment-text">${c.text}</div>
                         </div>
                     </div>
@@ -855,37 +1036,44 @@
             }).join('');
         }
 
-        function createPost() {
-            const content = document.getElementById('newPostContent').value.trim();
-            if (!content) return;
-
-            const newPost = {
-                id: Date.now(),
-                userId: currentUser.username,
-                content,
-                time: new Date().toISOString(),
-                likes: 0,
-                likedBy: [],
-                comments: [],
-                shares: 0
-            };
-            posts.unshift(newPost);
-            saveData();
-            showFeed();
-        }
-
-        function toggleLike(postId) {
-            const post = posts.find(p => p.id === postId);
+        async function toggleLike(postId) {
+            const post = posts.find(p => (p._id || p.id) == postId);
             if (!post) return;
-            const index = post.likedBy.indexOf(currentUser.username);
-            if (index === -1) {
-                post.likedBy.push(currentUser.username);
-                post.likes++;
-            } else {
-                post.likedBy.splice(index, 1);
-                post.likes--;
+            const liked = post.likedBy.includes(currentUser.username);
+            try {
+                const token = localStorage.getItem('deeh_token');
+                const res = await fetch(`${API_BASE}/posts/${postId}/like`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ username: currentUser.username })
+                });
+                if (res.ok) {
+                    const updated = await res.json();
+                    // update local post
+                    Object.assign(post, updated);
+                } else {
+                    // fallback local toggle
+                    if (liked) {
+                        post.likedBy = post.likedBy.filter(u => u !== currentUser.username);
+                        post.likes--;
+                    } else {
+                        post.likedBy.push(currentUser.username);
+                        post.likes++;
+                    }
+                }
+            } catch (err) {
+                // fallback local toggle
+                if (liked) {
+                    post.likedBy = post.likedBy.filter(u => u !== currentUser.username);
+                    post.likes--;
+                } else {
+                    post.likedBy.push(currentUser.username);
+                    post.likes++;
+                }
             }
-            saveData();
             renderPosts();
         }
 
@@ -894,31 +1082,57 @@
             if (section) section.classList.toggle('hidden');
         }
 
-        function addComment(postId) {
+        async function addComment(postId) {
             const input = document.getElementById(`comment-input-${postId}`);
             const text = input.value.trim();
             if (!text) return;
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.comments.push({
-                    id: Date.now(),
-                    userId: currentUser.username,
-                    text
+            const post = posts.find(p => (p._id || p.id) == postId);
+            if (!post) return;
+            try {
+                const token = localStorage.getItem('deeh_token');
+                const res = await fetch(`${API_BASE}/posts/${postId}/comment`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ userId: currentUser.username, text })
                 });
-                saveData();
-                renderPosts();
-                document.getElementById(`comments-${postId}`).classList.remove('hidden');
+                if (res.ok) {
+                    const updated = await res.json();
+                    Object.assign(post, updated);
+                } else {
+                    // fallback
+                    post.comments.push({ userId: currentUser.username, text, createdAt: new Date() });
+                }
+            } catch (err) {
+                post.comments.push({ userId: currentUser.username, text, createdAt: new Date() });
             }
+            input.value = '';
+            renderPosts();
+            document.getElementById(`comments-${postId}`).classList.remove('hidden');
         }
 
-        function sharePost(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.shares++;
-                saveData();
-                renderPosts();
-                alert('Post shared! (Demo)');
+        async function sharePost(postId) {
+            const post = posts.find(p => (p._id || p.id) == postId);
+            if (!post) return;
+            try {
+                const token = localStorage.getItem('deeh_token');
+                const res = await fetch(`${API_BASE}/posts/${postId}/share`, {
+                    method: 'POST',
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                if (res.ok) {
+                    const updated = await res.json();
+                    Object.assign(post, updated);
+                } else {
+                    post.shares = (post.shares || 0) + 1;
+                }
+            } catch (err) {
+                post.shares = (post.shares || 0) + 1;
             }
+            renderPosts();
+            alert('Post shared!');
         }
 
         // ========== SEARCH ==========
@@ -941,7 +1155,8 @@
                 resultsDiv.innerHTML = '';
                 return;
             }
-            const matched = Object.values(users).filter(u => 
+            let userList = Array.isArray(users) ? users : Object.values(users);
+            const matched = userList.filter(u => 
                 u.name.toLowerCase().includes(query) || u.username.toLowerCase().includes(query)
             );
             if (matched.length === 0) {
@@ -952,7 +1167,7 @@
             matched.forEach(u => {
                 html += `
                     <div class="search-result-item" onclick="viewUserProfile('${u.username}')">
-                        <div class="suggestion-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:white;">${u.avatar}</div>
+                        <div style="width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:white;">${u.avatar || u.name.charAt(0)}</div>
                         <div>
                             <div style="font-weight:600;">${u.name}</div>
                             <div style="color:var(--text-secondary);">@${u.username}</div>
@@ -963,26 +1178,38 @@
             resultsDiv.innerHTML = html;
         }
 
-        // ========== PROFILE (any user) ==========
+        // ========== PROFILE ==========
         function viewUserProfile(username) {
             viewingUserId = username;
             currentView = 'userProfile';
             showProfile(username);
         }
 
-        function showProfile(username) {
-            const user = users[username];
+        async function showProfile(username) {
+            let user;
+            if (Array.isArray(users)) {
+                user = users.find(u => u.username === username);
+            } else {
+                user = users[username];
+            }
+            if (!user) {
+                // fetch from backend if not in local
+                try {
+                    const res = await fetch(`${API_BASE}/users/${username}`);
+                    if (res.ok) user = await res.json();
+                } catch (e) {}
+            }
             if (!user) return;
 
             renderNav();
-            const isOwnProfile = (currentUser.username === username);
             const userPosts = posts.filter(p => p.userId === username);
             const totalLikes = userPosts.reduce((sum, p) => sum + p.likes, 0);
-            const isFollowing = isOwnProfile ? false : user.followers.includes(currentUser.username);
+            const isOwnProfile = (currentUser.username === username);
+            const isFollowing = isOwnProfile ? false : user.followers?.includes(currentUser.username);
 
             let html = `
                 <div class="profile-header">
-                    <div class="profile-avatar-large">${user.avatar}</div>
+                    <div class="profile-avatar-large">${user.avatar || user.name.charAt(0)}</div>
                     <h2>${user.name}</h2>
                     <p style="color:var(--text-secondary);">@${user.username}</p>
                     <p style="margin-top:0.5rem;">${user.bio || 'No bio yet.'}</p>
@@ -1002,7 +1229,7 @@
                         <div class="stat-label">Likes</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-number">${user.followers.length}</div>
+                        <div class="stat-number">${user.followers?.length || 0}</div>
                         <div class="stat-label">Followers</div>
                     </div>
                 </div>
@@ -1020,9 +1247,14 @@
                     postsHtml += `
                         <div class="post">
                             <div class="post-content">${post.content}</div>
+                            ${post.media ? post.media.map(m => 
+                                m.type === 'image' 
+                                    ? `<img src="${m.dataUrl || (API_BASE + m.url)}" class="post-media">`
+                                    : `<video src="${m.dataUrl || (API_BASE + m.url)}" controls class="post-media"></video>`
+                            ).join('') : ''}
                             <div class="post-stats" style="border:none;">
                                 <span><i class="fas fa-heart" style="color:#ef4444;"></i> ${post.likes}</span>
-                                <span><i class="fas fa-comment"></i> ${post.comments.length}</span>
+                                <span><i class="fas fa-comment"></i> ${post.comments?.length || 0}</span>
                             </div>
                         </div>
                     `;
@@ -1031,21 +1263,36 @@
             }
         }
 
-        function toggleFollow(username) {
-            const target = users[username];
-            const current = users[currentUser.username];
-            if (!target || !current) return;
-
-            const index = target.followers.indexOf(currentUser.username);
-            if (index === -1) {
-                target.followers.push(currentUser.username);
-                current.following.push(username);
-            } else {
-                target.followers.splice(index, 1);
-                const followingIndex = current.following.indexOf(username);
-                if (followingIndex !== -1) current.following.splice(followingIndex, 1);
+        async function toggleFollow(username) {
+            try {
+                const token = localStorage.getItem('deeh_token');
+                const res = await fetch(`${API_BASE}/users/${username}/follow`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ currentUsername: currentUser.username })
+                });
+                if (res.ok) {
+                    // Refresh user data
+                    await loadAllData();
+                }
+            } catch (err) {
+                // fallback local
+                const target = users[username];
+                const current = users[currentUser.username];
+                if (!target || !current) return;
+                const index = target.followers.indexOf(currentUser.username);
+                if (index === -1) {
+                    target.followers.push(currentUser.username);
+                    current.following.push(username);
+                } else {
+                    target.followers.splice(index, 1);
+                    const idx = current.following.indexOf(username);
+                    if (idx !== -1) current.following.splice(idx, 1);
+                }
             }
-            saveData();
             showProfile(username);
         }
 
@@ -1057,7 +1304,7 @@
         }
 
         function renderSettings() {
-            const user = users[currentUser.username];
+            const user = getUserByUsername(currentUser.username);
             if (!user) return;
 
             let html = `
@@ -1079,7 +1326,7 @@
         }
 
         function loadSettingsTab() {
-            const user = users[currentUser.username];
+            const user = getUserByUsername(currentUser.username);
             const container = document.getElementById('settingsContent');
             if (!container) return;
 
@@ -1093,7 +1340,7 @@
                         </div>
                         <div class="settings-item">
                             <span class="settings-label">Username</span>
-                            <input type="text" id="settingsUsername" class="settings-input" value="${user.username}" disabled style="background:var(--border);">
+                            <input type="text" class="settings-input" value="${user.username}" disabled>
                         </div>
                         <div class="settings-item">
                             <span class="settings-label">Email</span>
@@ -1106,7 +1353,7 @@
                         <div class="settings-item">
                             <span class="settings-label">Profile Picture</span>
                             <div style="display:flex; gap:1rem; align-items:center;">
-                                <div class="profile-avatar-large" style="width:60px; height:60px; font-size:1.5rem; margin:0;">${user.avatar}</div>
+                                <div class="profile-avatar-large" style="width:60px; height:60px; font-size:1.5rem; margin:0;">${user.avatar || user.name.charAt(0)}</div>
                                 <button onclick="changeAvatar()" class="follow-btn" style="width:auto;">Change</button>
                             </div>
                         </div>
@@ -1131,23 +1378,23 @@
                         <div class="settings-item">
                             <span class="settings-label">Private Account</span>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="privateAccount" ${!user.privacy.public ? 'checked' : ''}>
+                                <input type="checkbox" id="privateAccount" ${!user.privacy?.public ? 'checked' : ''}>
                                 <span class="slider"></span>
                             </label>
                         </div>
                         <div class="settings-item">
                             <span class="settings-label">Who can see your posts</span>
                             <select id="postPrivacy" class="settings-input">
-                                <option value="public" ${user.privacy.public ? 'selected' : ''}>Everyone</option>
-                                <option value="followers" ${!user.privacy.public ? 'selected' : ''}>Followers only</option>
+                                <option value="public" ${user.privacy?.public ? 'selected' : ''}>Everyone</option>
+                                <option value="followers" ${!user.privacy?.public ? 'selected' : ''}>Followers only</option>
                             </select>
                         </div>
                         <div class="settings-item">
                             <span class="settings-label">Who can message you</span>
                             <select id="messagePrivacy" class="settings-input">
-                                <option value="everyone" ${user.privacy.messages === 'everyone' ? 'selected' : ''}>Everyone</option>
-                                <option value="followers" ${user.privacy.messages === 'followers' ? 'selected' : ''}>Followers only</option>
-                                <option value="none" ${user.privacy.messages === 'none' ? 'selected' : ''}>No one</option>
+                                <option value="everyone" ${user.privacy?.messages === 'everyone' ? 'selected' : ''}>Everyone</option>
+                                <option value="followers" ${user.privacy?.messages === 'followers' ? 'selected' : ''}>Followers only</option>
+                                <option value="none" ${user.privacy?.messages === 'none' ? 'selected' : ''}>No one</option>
                             </select>
                         </div>
                         <button onclick="savePrivacySettings()" class="follow-btn" style="width:100%; margin-top:1rem;">Save Privacy</button>
@@ -1194,59 +1441,80 @@
             }
         }
 
-        function saveAccountSettings() {
-            const user = users[currentUser.username];
+        async function saveAccountSettings() {
+            const user = getUserByUsername(currentUser.username);
             const newName = document.getElementById('settingsName')?.value.trim();
             const newEmail = document.getElementById('settingsEmail')?.value.trim();
             const newBio = document.getElementById('settingsBio')?.value.trim();
-            if (newName) user.name = newName;
-            if (newEmail) user.email = newEmail;
-            user.bio = newBio;
-            currentUser.name = newName;
-            currentUser.email = newEmail;
-            saveData();
-            alert('Profile updated!');
+            if (!newName || !newEmail) return;
+
+            try {
+                const token = localStorage.getItem('deeh_token');
+                const res = await fetch(`${API_BASE}/users/${currentUser.username}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ name: newName, email: newEmail, bio: newBio })
+                });
+                if (res.ok) {
+                    const updated = await res.json();
+                    if (Array.isArray(users)) {
+                        const idx = users.findIndex(u => u.username === currentUser.username);
+                        if (idx !== -1) users[idx] = updated;
+                    } else {
+                        users[currentUser.username] = updated;
+                    }
+                    currentUser.name = newName;
+                    currentUser.email = newEmail;
+                    alert('Profile updated!');
+                } else {
+                    alert('Update failed');
+                }
+            } catch (err) {
+                // fallback local
+                user.name = newName;
+                user.email = newEmail;
+                user.bio = newBio;
+                alert('Profile updated (local)');
+            }
             renderSettings();
         }
 
         function changeAvatar() {
-            const newAvatar = prompt('Enter new avatar initial (single letter):', users[currentUser.username].avatar);
-            if (newAvatar && newAvatar.length === 1) {
-                users[currentUser.username].avatar = newAvatar.toUpperCase();
-                saveData();
-                renderSettings();
-            }
+            alert('Avatar change would be implemented with file upload. (Demo)');
         }
 
         function changePassword() {
-            alert('Password change would be implemented with backend. (Demo)');
+            alert('Password change would require backend. (Demo)');
         }
 
-        function deleteAccount() {
-            if (confirm('Are you sure? This cannot be undone.')) {
+        async function deleteAccount() {
+            if (!confirm('Are you sure? This cannot be undone.')) return;
+            // Backend delete user? For now just local
+            if (Array.isArray(users)) {
+                users = users.filter(u => u.username !== currentUser.username);
+            } else {
                 delete users[currentUser.username];
-                posts = posts.filter(p => p.userId !== currentUser.username);
-                localStorage.removeItem('deeh_current_user');
-                currentUser = null;
-                saveData();
-                showLogin();
             }
+            posts = posts.filter(p => p.userId !== currentUser.username);
+            localStorage.removeItem('deeh_token');
+            localStorage.removeItem('deeh_current_user');
+            currentUser = null;
+            showLogin();
         }
 
         function savePrivacySettings() {
-            const user = users[currentUser.username];
+            const user = getUserByUsername(currentUser.username);
             const privateAccount = document.getElementById('privateAccount')?.checked;
             const postPrivacy = document.getElementById('postPrivacy')?.value;
             const messagePrivacy = document.getElementById('messagePrivacy')?.value;
-
-            user.privacy.public = !privateAccount; // if privateAccount checked => public false
-            // For simplicity, we also set based on dropdown; but we can combine
-            if (postPrivacy === 'followers') user.privacy.public = false;
-            else user.privacy.public = true;
-
+            if (!user.privacy) user.privacy = {};
+            user.privacy.public = postPrivacy === 'public';
             user.privacy.messages = messagePrivacy;
-            saveData();
-            alert('Privacy settings saved!');
+            // In real app, send to backend
+            alert('Privacy settings saved (locally)');
         }
 
         function saveNotificationSettings() {
@@ -1254,7 +1522,7 @@
             const push = document.getElementById('pushNotifications')?.checked;
             localStorage.setItem('deeh_email_notif', email);
             localStorage.setItem('deeh_push_notif', push);
-            alert('Notification preferences saved!');
+            alert('Notification preferences saved');
         }
 
         function toggleDarkMode() {
@@ -1277,19 +1545,8 @@
             setTimeout(() => document.getElementById('newPostContent')?.focus(), 100);
         }
 
-        // Initialize
-        initData();
-        if (currentUser) {
-            changeView('feed');
-        } else {
-            showLogin();
-        }
-
-        // Load accent color if saved
-        const savedAccent = localStorage.getItem('deeh_accent_color');
-        if (savedAccent) {
-            document.documentElement.style.setProperty('--accent', savedAccent);
-        }
+        // Start the app
+        init();
     </script>
 </body>
 </html>
