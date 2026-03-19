@@ -119,6 +119,7 @@
             color: var(--accent);
         }
 
+        /* Create Post */
         .create-post {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
@@ -203,6 +204,7 @@
             font-size: 14px;
         }
 
+        /* Post Card */
         .post {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
@@ -354,6 +356,7 @@
             cursor: pointer;
         }
 
+        /* Search */
         .search-bar {
             display: flex;
             align-items: center;
@@ -398,6 +401,7 @@
             background: var(--border);
         }
 
+        /* Profile */
         .profile-header {
             text-align: center;
             margin-bottom: 2rem;
@@ -454,6 +458,7 @@
             color: var(--text-primary);
         }
 
+        /* Settings */
         .settings-tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
@@ -583,19 +588,21 @@
 
     <script>
         // ========== CONFIG ==========
-        const API_BASE = 'http://localhost:5000/api';  // CHANGE THIS TO YOUR BACKEND URL
+        const API_BASE = 'http://localhost:5000/api';  // CHANGE THIS TO YOUR BACKEND URL OR LEAVE AS IS FOR DEMO MODE
 
-        // ========== STATE ==========
+        // ========== GLOBAL STATE ==========
         let currentUser = null;
         let currentView = 'feed';
-        let viewingUserId = null;
+        let viewingUserId = null;            // for viewing other profiles
         let darkMode = false;
         let settingsTab = 'account';
-        let users = [];          // array of user objects from backend
-        let posts = [];          // array of post objects from backend
+
+        // Data stores
+        let users = {};          // object with username as key (for quick lookup)
+        let posts = [];
 
         // For create post media
-        let selectedFiles = [];   // array of File objects
+        let selectedFiles = [];   // array of File objects (for API) OR we'll store base64 for demo
 
         // ========== INIT ==========
         async function init() {
@@ -611,7 +618,7 @@
                 document.documentElement.style.setProperty('--accent', savedAccent);
             }
 
-            // Check token
+            // Check if we have a token (for backend mode)
             const token = localStorage.getItem('deeh_token');
             if (token) {
                 try {
@@ -623,50 +630,81 @@
                         currentUser = data.user;
                         await loadAllData();
                         changeView('feed');
+                        return;
                     } else {
                         localStorage.removeItem('deeh_token');
-                        showLogin();
                     }
                 } catch (err) {
-                    console.warn('Backend not reachable, using demo mode');
-                    // Fallback to demo data
-                    loadDemoData();
-                    const savedUser = localStorage.getItem('deeh_current_user');
-                    if (savedUser) {
-                        currentUser = JSON.parse(savedUser);
-                        changeView('feed');
-                    } else {
-                        showLogin();
-                    }
+                    console.warn('Backend not reachable, switching to demo mode');
                 }
+            }
+
+            // Demo mode: try to load from localStorage
+            const savedUser = localStorage.getItem('deeh_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadDemoData();
+                changeView('feed');
             } else {
+                // No user, show login
                 showLogin();
             }
         }
 
+        // Load demo data from localStorage or initialize defaults
         function loadDemoData() {
-            users = {
-                'alice': { username: 'alice', name: 'Alice', avatar: 'A', email: 'alice@example.com', bio: 'Digital artist ✨', followers: ['bob'], following: ['bob', 'charlie'] },
-                'bob': { username: 'bob', name: 'Bob', avatar: 'B', email: 'bob@example.com', bio: 'Privacy advocate 🔒', followers: ['alice', 'charlie'], following: ['alice'] },
-                'charlie': { username: 'charlie', name: 'Charlie', avatar: 'C', email: 'charlie@example.com', bio: 'Developer 🚀', followers: ['bob'], following: ['alice'] }
-            };
-            posts = [
-                { id: 1, userId: 'alice', content: 'Hello Deeh!', media: [], time: new Date().toISOString(), likes: 5, likedBy: ['bob'], comments: [], shares: 0 },
-                { id: 2, userId: 'bob', content: 'Privacy first!', media: [], time: new Date().toISOString(), likes: 12, likedBy: ['alice','charlie'], comments: [], shares: 0 },
-                { id: 3, userId: 'charlie', content: 'Building features!', media: [], time: new Date().toISOString(), likes: 8, likedBy: ['bob'], comments: [], shares: 0 }
-            ];
+            // Load users
+            const savedUsers = localStorage.getItem('deeh_users');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            } else {
+                // Default users
+                users = {
+                    'alice': { username: 'alice', name: 'Alice', avatar: 'A', email: 'alice@example.com', bio: 'Digital artist ✨', followers: ['bob'], following: ['bob', 'charlie'] },
+                    'bob': { username: 'bob', name: 'Bob', avatar: 'B', email: 'bob@example.com', bio: 'Privacy advocate 🔒', followers: ['alice', 'charlie'], following: ['alice'] },
+                    'charlie': { username: 'charlie', name: 'Charlie', avatar: 'C', email: 'charlie@example.com', bio: 'Developer 🚀', followers: ['bob'], following: ['alice'] }
+                };
+            }
+
+            // Load posts
+            const savedPosts = localStorage.getItem('deeh_posts');
+            if (savedPosts) {
+                posts = JSON.parse(savedPosts);
+            } else {
+                posts = [
+                    { id: 1, userId: 'alice', content: 'Hello Deeh! This is my first post. Excited to be here! 🎉', media: [], time: new Date().toISOString(), likes: 5, likedBy: ['bob'], comments: [{ id: 101, userId: 'bob', text: 'Welcome Alice! 👋' }], shares: 1 },
+                    { id: 2, userId: 'bob', content: 'Privacy first social network is finally here! No tracking, no data selling. Just pure connection. 🔒', media: [], time: new Date().toISOString(), likes: 12, likedBy: ['alice', 'charlie'], comments: [{ id: 102, userId: 'alice', text: 'Love this concept!' }, { id: 103, userId: 'charlie', text: 'Finally a platform I can trust.' }], shares: 3 },
+                    { id: 3, userId: 'charlie', content: 'Working on some exciting features for Deeh. Stay tuned! 🚀', media: [], time: new Date().toISOString(), likes: 8, likedBy: ['bob'], comments: [{ id: 104, userId: 'bob', text: 'Can\'t wait to see!' }], shares: 0 }
+                ];
+            }
         }
 
+        // Save demo data to localStorage
+        function saveDemoData() {
+            localStorage.setItem('deeh_users', JSON.stringify(users));
+            localStorage.setItem('deeh_posts', JSON.stringify(posts));
+            if (currentUser) {
+                localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+            }
+        }
+
+        // Load data from backend (if available)
         async function loadAllData() {
             try {
                 const [usersRes, postsRes] = await Promise.all([
                     fetch(`${API_BASE}/users`),
                     fetch(`${API_BASE}/posts`)
                 ]);
-                if (usersRes.ok) users = await usersRes.json();
-                if (postsRes.ok) posts = await postsRes.json();
-            } catch (e) {
-                console.warn('Using demo data');
+                if (usersRes.ok) {
+                    const usersArray = await usersRes.json();
+                    // Convert array to object keyed by username
+                    users = {};
+                    usersArray.forEach(u => users[u.username] = u);
+                }
+                if (postsRes.ok) {
+                    posts = await postsRes.json();
+                }
+            } catch (err) {
                 loadDemoData();
             }
         }
@@ -686,12 +724,8 @@
             return diffDays + 'd ago';
         }
 
-        function getUserByUsername(username) {
-            if (Array.isArray(users)) {
-                return users.find(u => u.username === username);
-            } else {
-                return users[username]; // for object format
-            }
+        function getUser(username) {
+            return users[username] || { name: username, avatar: username.charAt(0).toUpperCase() };
         }
 
         function renderNav() {
@@ -762,34 +796,38 @@
                     </form>
                 </div>
             `;
+
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const username = document.getElementById('loginUsername').value.trim();
                 const password = document.getElementById('loginPassword').value;
+
+                // Try backend first
                 try {
                     const res = await fetch(`${API_BASE}/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, password })
                     });
-                    const data = await res.json();
                     if (res.ok) {
+                        const data = await res.json();
                         localStorage.setItem('deeh_token', data.token);
                         currentUser = data.user;
                         await loadAllData();
                         changeView('feed');
-                    } else {
-                        alert(data.msg || 'Login failed');
+                        return;
                     }
-                } catch (err) {
-                    // Fallback to demo login
-                    if (users[username]) {
-                        currentUser = { username, name: users[username].name, email: users[username].email };
-                        localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
-                        changeView('feed');
-                    } else {
-                        alert('Invalid credentials');
-                    }
+                } catch (err) {}
+
+                // Demo mode: check in users object
+                if (users[username]) {
+                    // In demo, any password works
+                    currentUser = { username, name: users[username].name, email: users[username].email };
+                    localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+                    loadDemoData(); // ensure data loaded
+                    changeView('feed');
+                } else {
+                    alert('Invalid username (try alice, bob, charlie)');
                 }
             });
         }
@@ -824,6 +862,7 @@
                     </form>
                 </div>
             `;
+
             document.getElementById('registerForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('regName').value.trim();
@@ -831,35 +870,41 @@
                 const email = document.getElementById('regEmail').value.trim();
                 const password = document.getElementById('regPassword').value;
 
+                // Try backend
                 try {
                     const res = await fetch(`${API_BASE}/auth/register`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, name, email, password })
                     });
-                    const data = await res.json();
                     if (res.ok) {
+                        const data = await res.json();
                         localStorage.setItem('deeh_token', data.token);
                         currentUser = data.user;
                         await loadAllData();
                         changeView('feed');
-                    } else {
-                        alert(data.msg || 'Registration failed');
-                    }
-                } catch (err) {
-                    // Fallback demo register
-                    if (users[username]) {
-                        alert('Username already taken');
                         return;
                     }
-                    const newUser = {
-                        username, name, email, avatar: name.charAt(0).toUpperCase(), bio: '', followers: [], following: []
-                    };
-                    users[username] = newUser;
-                    currentUser = { username, name, email };
-                    localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
-                    changeView('feed');
+                } catch (err) {}
+
+                // Demo mode
+                if (users[username]) {
+                    alert('Username already taken');
+                    return;
                 }
+                const newUser = {
+                    username,
+                    name,
+                    avatar: name.charAt(0).toUpperCase(),
+                    email,
+                    bio: '',
+                    followers: [],
+                    following: []
+                };
+                users[username] = newUser;
+                currentUser = { username, name, email };
+                saveDemoData();
+                changeView('feed');
             });
         }
 
@@ -917,46 +962,54 @@
             const content = document.getElementById('newPostContent')?.value.trim() || '';
             if (!content && selectedFiles.length === 0) return;
 
-            const formData = new FormData();
-            formData.append('userId', currentUser.username);
-            formData.append('content', content);
-            selectedFiles.forEach(file => formData.append('media', file));
-
-            try {
-                const token = localStorage.getItem('deeh_token');
-                const res = await fetch(`${API_BASE}/posts`, {
-                    method: 'POST',
-                    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-                    body: formData
-                });
-                if (res.ok) {
-                    const newPost = await res.json();
-                    posts.unshift(newPost);
-                    selectedFiles = [];
-                    showFeed();
-                } else {
-                    alert('Failed to create post');
-                }
-            } catch (err) {
-                // Fallback: create post locally with base64 (not for production)
-                const newPost = {
-                    id: Date.now(),
-                    userId: currentUser.username,
-                    content,
-                    media: await Promise.all(selectedFiles.map(async file => ({
-                        type: file.type.startsWith('image/') ? 'image' : 'video',
-                        dataUrl: await fileToDataURL(file)
-                    }))),
-                    time: new Date().toISOString(),
-                    likes: 0,
-                    likedBy: [],
-                    comments: [],
-                    shares: 0
-                };
-                posts.unshift(newPost);
-                selectedFiles = [];
-                showFeed();
+            // Try backend first
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                const formData = new FormData();
+                formData.append('userId', currentUser.username);
+                formData.append('content', content);
+                selectedFiles.forEach(file => formData.append('media', file));
+                try {
+                    const res = await fetch(`${API_BASE}/posts`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    if (res.ok) {
+                        const newPost = await res.json();
+                        posts.unshift(newPost);
+                        selectedFiles = [];
+                        showFeed();
+                        return;
+                    }
+                } catch (err) {}
             }
+
+            // Demo mode: convert files to base64 and store in post
+            const mediaItems = [];
+            for (const file of selectedFiles) {
+                const dataUrl = await fileToDataURL(file);
+                mediaItems.push({
+                    type: file.type.startsWith('image/') ? 'image' : 'video',
+                    dataUrl: dataUrl
+                });
+            }
+
+            const newPost = {
+                id: Date.now(),
+                userId: currentUser.username,
+                content,
+                media: mediaItems,
+                time: new Date().toISOString(),
+                likes: 0,
+                likedBy: [],
+                comments: [],
+                shares: 0
+            };
+            posts.unshift(newPost);
+            selectedFiles = [];
+            saveDemoData();
+            showFeed();
         }
 
         function fileToDataURL(file) {
@@ -974,10 +1027,10 @@
             const sortedPosts = [...posts].sort((a, b) => new Date(b.time) - new Date(a.time));
             let html = '';
             sortedPosts.forEach(post => {
-                const user = getUserByUsername(post.userId) || { name: post.userId, avatar: post.userId.charAt(0) };
+                const user = getUser(post.userId);
                 const isLiked = post.likedBy?.includes(currentUser?.username);
                 html += `
-                    <div class="post">
+                    <div class="post" data-post-id="${post._id || post.id}">
                         <div class="post-header" onclick="viewUserProfile('${post.userId}')">
                             <div class="post-avatar">${user.avatar || 'U'}</div>
                             <div class="post-user-info">
@@ -1023,12 +1076,12 @@
         function renderComments(comments) {
             if (!comments || comments.length === 0) return '<p style="color:var(--text-secondary); text-align:center;">No comments yet.</p>';
             return comments.map(c => {
-                const commentUser = getUserByUsername(c.userId);
+                const commentUser = getUser(c.userId);
                 return `
                     <div class="comment">
-                        <div class="comment-avatar" onclick="viewUserProfile('${c.userId}')">${commentUser?.avatar || c.userId.charAt(0)}</div>
+                        <div class="comment-avatar" onclick="viewUserProfile('${c.userId}')">${commentUser.avatar || c.userId.charAt(0)}</div>
                         <div class="comment-content">
-                            <div class="comment-user" onclick="viewUserProfile('${c.userId}')">${commentUser?.name || c.userId}</div>
+                            <div class="comment-user" onclick="viewUserProfile('${c.userId}')">${commentUser.name || c.userId}</div>
                             <div class="comment-text">${c.text}</div>
                         </div>
                     </div>
@@ -1039,42 +1092,37 @@
         async function toggleLike(postId) {
             const post = posts.find(p => (p._id || p.id) == postId);
             if (!post) return;
+
+            // Optimistic update
             const liked = post.likedBy.includes(currentUser.username);
-            try {
-                const token = localStorage.getItem('deeh_token');
-                const res = await fetch(`${API_BASE}/posts/${postId}/like`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    },
-                    body: JSON.stringify({ username: currentUser.username })
-                });
-                if (res.ok) {
-                    const updated = await res.json();
-                    // update local post
-                    Object.assign(post, updated);
-                } else {
-                    // fallback local toggle
-                    if (liked) {
-                        post.likedBy = post.likedBy.filter(u => u !== currentUser.username);
-                        post.likes--;
-                    } else {
-                        post.likedBy.push(currentUser.username);
-                        post.likes++;
-                    }
-                }
-            } catch (err) {
-                // fallback local toggle
-                if (liked) {
-                    post.likedBy = post.likedBy.filter(u => u !== currentUser.username);
-                    post.likes--;
-                } else {
-                    post.likedBy.push(currentUser.username);
-                    post.likes++;
-                }
+            if (liked) {
+                post.likedBy = post.likedBy.filter(u => u !== currentUser.username);
+                post.likes--;
+            } else {
+                post.likedBy.push(currentUser.username);
+                post.likes++;
             }
             renderPosts();
+
+            // Try backend
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                try {
+                    await fetch(`${API_BASE}/posts/${postId}/like`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ username: currentUser.username })
+                    });
+                    // If success, fine. If fails, we could revert, but for simplicity we keep optimistic.
+                } catch (err) {
+                    // Revert? Maybe not needed for demo
+                }
+            } else {
+                saveDemoData();
+            }
         }
 
         function toggleComments(postId) {
@@ -1088,51 +1136,54 @@
             if (!text) return;
             const post = posts.find(p => (p._id || p.id) == postId);
             if (!post) return;
-            try {
-                const token = localStorage.getItem('deeh_token');
-                const res = await fetch(`${API_BASE}/posts/${postId}/comment`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    },
-                    body: JSON.stringify({ userId: currentUser.username, text })
-                });
-                if (res.ok) {
-                    const updated = await res.json();
-                    Object.assign(post, updated);
-                } else {
-                    // fallback
-                    post.comments.push({ userId: currentUser.username, text, createdAt: new Date() });
-                }
-            } catch (err) {
-                post.comments.push({ userId: currentUser.username, text, createdAt: new Date() });
-            }
-            input.value = '';
+
+            const newComment = {
+                id: Date.now(),
+                userId: currentUser.username,
+                text,
+                createdAt: new Date().toISOString()
+            };
+            post.comments.push(newComment);
             renderPosts();
             document.getElementById(`comments-${postId}`).classList.remove('hidden');
+            input.value = '';
+
+            // Try backend
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                try {
+                    await fetch(`${API_BASE}/posts/${postId}/comment`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ userId: currentUser.username, text })
+                    });
+                } catch (err) {}
+            } else {
+                saveDemoData();
+            }
         }
 
         async function sharePost(postId) {
             const post = posts.find(p => (p._id || p.id) == postId);
             if (!post) return;
-            try {
-                const token = localStorage.getItem('deeh_token');
-                const res = await fetch(`${API_BASE}/posts/${postId}/share`, {
-                    method: 'POST',
-                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                });
-                if (res.ok) {
-                    const updated = await res.json();
-                    Object.assign(post, updated);
-                } else {
-                    post.shares = (post.shares || 0) + 1;
-                }
-            } catch (err) {
-                post.shares = (post.shares || 0) + 1;
-            }
+            post.shares = (post.shares || 0) + 1;
             renderPosts();
             alert('Post shared!');
+
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                try {
+                    await fetch(`${API_BASE}/posts/${postId}/share`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                } catch (err) {}
+            } else {
+                saveDemoData();
+            }
         }
 
         // ========== SEARCH ==========
@@ -1155,7 +1206,7 @@
                 resultsDiv.innerHTML = '';
                 return;
             }
-            let userList = Array.isArray(users) ? users : Object.values(users);
+            const userList = Object.values(users);
             const matched = userList.filter(u => 
                 u.name.toLowerCase().includes(query) || u.username.toLowerCase().includes(query)
             );
@@ -1186,26 +1237,28 @@
         }
 
         async function showProfile(username) {
-            let user;
-            if (Array.isArray(users)) {
-                user = users.find(u => u.username === username);
-            } else {
-                user = users[username];
-            }
+            const user = users[username];
             if (!user) {
-                // fetch from backend if not in local
+                // Try fetch from backend if possible
                 try {
                     const res = await fetch(`${API_BASE}/users/${username}`);
-                    if (res.ok) user = await res.json();
-                } catch (e) {}
+                    if (res.ok) {
+                        const fetched = await res.json();
+                        users[username] = fetched;
+                    }
+                } catch (err) {}
+                if (!users[username]) {
+                    alert('User not found');
+                    changeView('feed');
+                    return;
+                }
             }
-            if (!user) return;
 
             renderNav();
             const userPosts = posts.filter(p => p.userId === username);
             const totalLikes = userPosts.reduce((sum, p) => sum + p.likes, 0);
             const isOwnProfile = (currentUser.username === username);
-            const isFollowing = isOwnProfile ? false : user.followers?.includes(currentUser.username);
+            const isFollowing = isOwnProfile ? false : (user.followers || []).includes(currentUser.username);
 
             let html = `
                 <div class="profile-header">
@@ -1264,36 +1317,38 @@
         }
 
         async function toggleFollow(username) {
-            try {
-                const token = localStorage.getItem('deeh_token');
-                const res = await fetch(`${API_BASE}/users/${username}/follow`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    },
-                    body: JSON.stringify({ currentUsername: currentUser.username })
-                });
-                if (res.ok) {
-                    // Refresh user data
-                    await loadAllData();
-                }
-            } catch (err) {
-                // fallback local
-                const target = users[username];
-                const current = users[currentUser.username];
-                if (!target || !current) return;
-                const index = target.followers.indexOf(currentUser.username);
-                if (index === -1) {
-                    target.followers.push(currentUser.username);
-                    current.following.push(username);
-                } else {
-                    target.followers.splice(index, 1);
-                    const idx = current.following.indexOf(username);
-                    if (idx !== -1) current.following.splice(idx, 1);
-                }
+            const target = users[username];
+            const current = users[currentUser.username];
+            if (!target || !current) return;
+
+            const isFollowing = target.followers.includes(currentUser.username);
+            // Optimistic update
+            if (isFollowing) {
+                target.followers = target.followers.filter(u => u !== currentUser.username);
+                current.following = current.following.filter(u => u !== username);
+            } else {
+                target.followers.push(currentUser.username);
+                current.following.push(username);
             }
+            // Update UI
             showProfile(username);
+
+            // Try backend
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                try {
+                    await fetch(`${API_BASE}/users/${username}/follow`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ currentUsername: currentUser.username })
+                    });
+                } catch (err) {}
+            } else {
+                saveDemoData();
+            }
         }
 
         // ========== SETTINGS ==========
@@ -1304,7 +1359,7 @@
         }
 
         function renderSettings() {
-            const user = getUserByUsername(currentUser.username);
+            const user = users[currentUser.username];
             if (!user) return;
 
             let html = `
@@ -1326,7 +1381,7 @@
         }
 
         function loadSettingsTab() {
-            const user = getUserByUsername(currentUser.username);
+            const user = users[currentUser.username];
             const container = document.getElementById('settingsContent');
             if (!container) return;
 
@@ -1442,43 +1497,34 @@
         }
 
         async function saveAccountSettings() {
-            const user = getUserByUsername(currentUser.username);
+            const user = users[currentUser.username];
             const newName = document.getElementById('settingsName')?.value.trim();
             const newEmail = document.getElementById('settingsEmail')?.value.trim();
             const newBio = document.getElementById('settingsBio')?.value.trim();
             if (!newName || !newEmail) return;
 
-            try {
-                const token = localStorage.getItem('deeh_token');
-                const res = await fetch(`${API_BASE}/users/${currentUser.username}`, {
-                    method: 'PUT',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    },
-                    body: JSON.stringify({ name: newName, email: newEmail, bio: newBio })
-                });
-                if (res.ok) {
-                    const updated = await res.json();
-                    if (Array.isArray(users)) {
-                        const idx = users.findIndex(u => u.username === currentUser.username);
-                        if (idx !== -1) users[idx] = updated;
-                    } else {
-                        users[currentUser.username] = updated;
-                    }
-                    currentUser.name = newName;
-                    currentUser.email = newEmail;
-                    alert('Profile updated!');
-                } else {
-                    alert('Update failed');
-                }
-            } catch (err) {
-                // fallback local
-                user.name = newName;
-                user.email = newEmail;
-                user.bio = newBio;
-                alert('Profile updated (local)');
+            user.name = newName;
+            user.email = newEmail;
+            user.bio = newBio;
+            currentUser.name = newName;
+            currentUser.email = newEmail;
+
+            // Try backend
+            const token = localStorage.getItem('deeh_token');
+            if (token) {
+                try {
+                    await fetch(`${API_BASE}/users/${currentUser.username}`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ name: newName, email: newEmail, bio: newBio })
+                    });
+                } catch (err) {}
             }
+            saveDemoData();
+            alert('Profile updated!');
             renderSettings();
         }
 
@@ -1492,28 +1538,24 @@
 
         async function deleteAccount() {
             if (!confirm('Are you sure? This cannot be undone.')) return;
-            // Backend delete user? For now just local
-            if (Array.isArray(users)) {
-                users = users.filter(u => u.username !== currentUser.username);
-            } else {
-                delete users[currentUser.username];
-            }
+            delete users[currentUser.username];
             posts = posts.filter(p => p.userId !== currentUser.username);
             localStorage.removeItem('deeh_token');
             localStorage.removeItem('deeh_current_user');
+            saveDemoData();
             currentUser = null;
             showLogin();
         }
 
         function savePrivacySettings() {
-            const user = getUserByUsername(currentUser.username);
+            const user = users[currentUser.username];
             const privateAccount = document.getElementById('privateAccount')?.checked;
             const postPrivacy = document.getElementById('postPrivacy')?.value;
             const messagePrivacy = document.getElementById('messagePrivacy')?.value;
             if (!user.privacy) user.privacy = {};
             user.privacy.public = postPrivacy === 'public';
             user.privacy.messages = messagePrivacy;
-            // In real app, send to backend
+            saveDemoData();
             alert('Privacy settings saved (locally)');
         }
 
