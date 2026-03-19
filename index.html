@@ -1,941 +1,1295 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deeh - Social Circle</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deeh – Your Private Social</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #f0f2f5; }
-        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
-        .story-ring { background: linear-gradient(45deg, #f09433, #d62976, #962fbf, #4f5bd5); padding: 3px; border-radius: 50%; }
-        .story-ring img { border: 3px solid white; border-radius: 50%; }
-        .active-tab { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
-        .post-card { transition: all 0.2s; }
-        .post-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-        .like-btn.active { color: #ef4444; transform: scale(1.1); }
-        .like-btn.active i { font-weight: 900; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 1000; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
-        .preview-image { width: 100%; max-height: 250px; object-fit: cover; border-radius: 15px; margin-top: 10px; }
-        .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
-        .settings-item { transition: all 0.2s; }
-        .settings-item:hover { background: #f3f4f6; transform: translateX(5px); }
-        .dark-mode { background: #1a1a1a; color: white; }
-        .dark-mode .bg-white { background: #2d2d2d; color: white; }
+        /* ========== RESET & VARIABLES ========== */
+        :root {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --nav-height: 60px;
+        }
+
+        .dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #60a5fa;
+            --accent-hover: #93c5fd;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #app {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            min-height: 100vh;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            background: var(--bg-secondary);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        main {
+            padding: 1rem;
+            padding-bottom: calc(80px + 1rem);
+        }
+
+        /* ========== BOTTOM NAV ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 700px;
+            width: 100%;
+            background: var(--bg-secondary);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .bottom-nav a {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .bottom-nav a.active {
+            color: var(--accent);
+        }
+
+        /* ========== POST CARD ========== */
+        .post {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .post-user-info {
+            flex: 1;
+        }
+
+        .post-username {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .post-time {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .post-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+            white-space: pre-wrap;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .post-action:hover {
+            background: var(--border);
+        }
+
+        .post-action.liked {
+            color: #ef4444;
+        }
+
+        /* ========== COMMENTS ========== */
+        .comments-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .comment {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .comment-content {
+            flex: 1;
+            background: var(--bg-primary);
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+        }
+
+        .comment-user {
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--accent);
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+        }
+
+        .add-comment {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .add-comment input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .add-comment button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+        }
+
+        /* ========== CREATE POST ========== */
+        .create-post {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .create-post textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: none;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .create-post button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.6rem 2rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            float: right;
+        }
+
+        /* ========== SEARCH BAR ========== */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-bar i {
+            color: var(--text-secondary);
+            margin-right: 0.5rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: var(--text-primary);
+        }
+
+        .search-results {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 0.5rem;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: var(--border);
+        }
+
+        /* ========== PROFILE ========== */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .follow-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 2rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .follow-btn.following {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        /* ========== SETTINGS ========== */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .settings-tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .settings-tab.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .settings-section {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            font-weight: 500;
+        }
+
+        .settings-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            width: 200px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .danger-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
     </style>
 </head>
 <body>
+    <div id="app">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="logo" onclick="changeView('feed')">Deeh</div>
+            <div class="nav-links" id="navLinks"></div>
+        </nav>
 
-<div class="app-container relative" id="appContainer">
-    <!-- Toast -->
-    <div id="toast" class="toast hidden"></div>
+        <!-- Main Content -->
+        <main id="mainContent"></main>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-[200] hidden flex items-center justify-center">
-        <div class="bg-white p-5 rounded-full"><i class="fas fa-spinner fa-spin text-3xl text-blue-600"></i></div>
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="bottomNav"></div>
     </div>
 
-    <!-- AUTH PAGE -->
-    <div id="authPage" class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 w-full shadow-2xl border border-white/30">
-            <div class="text-center mb-8">
-                <h1 class="text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">DEEH</h1>
-                <p class="text-gray-500 text-sm">Where real meets social ✨</p>
-            </div>
-            
-            <div class="flex gap-2 mb-6">
-                <button onclick="toggleAuthTab('login')" id="loginTabBtn" class="flex-1 py-3 font-bold rounded-xl bg-blue-600 text-white">Login</button>
-                <button onclick="toggleAuthTab('signup')" id="signupTabBtn" class="flex-1 py-3 font-bold rounded-xl bg-gray-100 text-gray-600">Sign Up</button>
-            </div>
+    <script>
+        // ========== GLOBAL STATE ==========
+        let currentUser = null;
+        let currentView = 'feed';          // feed, search, profile, settings, userProfile
+        let viewingUserId = null;           // for viewing other profiles
+        let darkMode = false;
+        let settingsTab = 'account';        // current settings tab
 
-            <!-- Login Form -->
-            <form id="loginForm" class="space-y-4">
-                <input type="email" id="loginEmail" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
-                <input type="password" id="loginPassword" placeholder="Password" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
-                <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition">
-                    Login <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </form>
+        // ========== DATA (localStorage se load/save) ==========
+        let users = {};      // key: username, value: user object
+        let posts = [];
 
-            <!-- Signup Form (hidden initially) -->
-            <form id="signupForm" class="space-y-4 hidden">
-                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
-                <input type="email" id="regEmail" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
-                <input type="password" id="regPassword" placeholder="Password" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 outline-none">
-                <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition">
-                    Create Account <i class="fas fa-user-plus ml-2"></i>
-                </button>
-            </form>
-        </div>
-    </div>
+        // Initialize default data if localStorage empty
+        function initData() {
+            if (!localStorage.getItem('deeh_users')) {
+                // Default users
+                users = {
+                    'alice': { username: 'alice', name: 'Alice', avatar: 'A', email: 'alice@example.com', bio: 'Digital artist ✨', followers: ['bob'], following: ['bob', 'charlie'], privacy: { public: true, messages: 'everyone' } },
+                    'bob': { username: 'bob', name: 'Bob', avatar: 'B', email: 'bob@example.com', bio: 'Privacy advocate 🔒', followers: ['alice', 'charlie'], following: ['alice'], privacy: { public: true, messages: 'everyone' } },
+                    'charlie': { username: 'charlie', name: 'Charlie', avatar: 'C', email: 'charlie@example.com', bio: 'Developer 🚀', followers: ['bob'], following: ['alice'], privacy: { public: false, messages: 'followers' } }
+                };
 
-    <!-- MAIN APP -->
-    <div id="mainApp" class="hidden">
-        <!-- Header - Instagram Style -->
-        <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b px-4 py-3 flex justify-between items-center">
-            <h1 class="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">DEEH</h1>
-            <div class="flex items-center space-x-4">
-                <i class="fas fa-heart text-2xl text-gray-600 hover:text-red-500 cursor-pointer transition"></i>
-                <i class="fas fa-envelope text-2xl text-gray-600 hover:text-blue-500 cursor-pointer transition"></i>
-                <i class="fas fa-cog text-2xl text-gray-600 hover:text-gray-900 cursor-pointer transition" onclick="showSection('settings')"></i>
-            </div>
-        </div>
+                // Default posts
+                posts = [
+                    { id: 1, userId: 'alice', content: 'Hello Deeh! This is my first post. Excited to be here! 🎉', time: '2025-03-19T10:00:00Z', likes: 5, likedBy: ['bob'], comments: [{ id: 101, userId: 'bob', text: 'Welcome Alice! 👋' }], shares: 1 },
+                    { id: 2, userId: 'bob', content: 'Privacy first social network is finally here! No tracking, no data selling. Just pure connection. 🔒', time: '2025-03-19T09:45:00Z', likes: 12, likedBy: ['alice', 'charlie'], comments: [{ id: 102, userId: 'alice', text: 'Love this concept!' }, { id: 103, userId: 'charlie', text: 'Finally a platform I can trust.' }], shares: 3 },
+                    { id: 3, userId: 'charlie', content: 'Working on some exciting features for Deeh. Stay tuned! 🚀', time: '2025-03-19T08:30:00Z', likes: 8, likedBy: ['bob'], comments: [{ id: 104, userId: 'bob', text: 'Can\'t wait to see!' }], shares: 0 }
+                ];
 
-        <!-- Stories - Instagram Style -->
-        <div class="px-4 py-3 border-b overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <div class="inline-flex space-x-4">
-                <div class="flex flex-col items-center">
-                    <div class="story-ring w-16 h-16">
-                        <img src="https://via.placeholder.com/100" class="w-full h-full rounded-full border-3 border-white">
-                    </div>
-                    <span class="text-xs mt-1 font-medium">Your Story</span>
-                </div>
-                <!-- More stories will be loaded dynamically -->
-            </div>
-        </div>
-
-        <!-- Tabs - Twitter Style -->
-        <div class="flex border-b sticky top-[73px] z-40 bg-white">
-            <button onclick="showSection('feed')" id="feedTab" class="flex-1 py-3 font-bold text-center active-tab">
-                <i class="fas fa-stream mr-2"></i>Feed
-            </button>
-            <button onclick="showSection('explore')" id="exploreTab" class="flex-1 py-3 font-bold text-center text-gray-400">
-                <i class="fas fa-compass mr-2"></i>Explore
-            </button>
-            <button onclick="showSection('profile')" id="profileTab" class="flex-1 py-3 font-bold text-center text-gray-400">
-                <i class="fas fa-user mr-2"></i>Profile
-            </button>
-            <button onclick="showSection('settings')" id="settingsTab" class="flex-1 py-3 font-bold text-center text-gray-400">
-                <i class="fas fa-cog mr-2"></i>Settings
-            </button>
-        </div>
-
-        <!-- FEED SECTION - Instagram + Twitter Mix -->
-        <div id="feedSection" class="pb-20">
-            <div id="postsList" class="divide-y"></div>
-        </div>
-
-        <!-- EXPLORE SECTION - Grid Layout -->
-        <div id="exploreSection" class="hidden p-4 pb-20">
-            <div class="grid grid-cols-3 gap-1">
-                <!-- Explore grid items will load here -->
-                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">📸</div>
-                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">📸</div>
-                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">📸</div>
-            </div>
-        </div>
-
-        <!-- PROFILE SECTION - Instagram + Facebook Mix -->
-        <div id="profileSection" class="hidden pb-20">
-            <!-- Cover Photo -->
-            <div class="h-32 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-            
-            <!-- Profile Info -->
-            <div class="px-4 -mt-12">
-                <div class="relative">
-                    <div class="w-24 h-24 rounded-full border-4 border-white overflow-hidden bg-white">
-                        <div id="pInitial" class="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-3xl font-bold">D</div>
-                    </div>
-                    <button class="absolute top-0 right-0 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-blue-700 transition">
-                        Edit Profile
-                    </button>
-                </div>
-                
-                <div class="mt-3">
-                    <h2 id="pName" class="text-2xl font-bold">DEEPAK</h2>
-                    <p id="pEmail" class="text-gray-500 text-sm mb-3">dipakpal73070@gmail.com</p>
-                    <p class="text-gray-700 mb-4">✨ Building something amazing | Tech enthusiast | Travel lover</p>
-                </div>
-
-                <!-- Stats - Facebook Style -->
-                <div class="flex justify-around py-4 border-y mb-4">
-                    <div class="text-center">
-                        <span id="userPostCount" class="block text-2xl font-bold">0</span>
-                        <span class="text-gray-500 text-sm">Posts</span>
-                    </div>
-                    <div class="text-center">
-                        <span class="block text-2xl font-bold">1.2k</span>
-                        <span class="text-gray-500 text-sm">Followers</span>
-                    </div>
-                    <div class="text-center">
-                        <span class="block text-2xl font-bold">567</span>
-                        <span class="text-gray-500 text-sm">Following</span>
-                    </div>
-                </div>
-
-                <!-- Profile Tabs -->
-                <div class="flex border-b">
-                    <button onclick="showProfileTab('posts')" id="profilePostsTab" class="flex-1 py-3 text-center font-bold text-blue-600 border-b-2 border-blue-600">
-                        <i class="fas fa-th-large mr-2"></i>Posts
-                    </button>
-                    <button onclick="showProfileTab('reels')" id="profileReelsTab" class="flex-1 py-3 text-center font-bold text-gray-400">
-                        <i class="fas fa-video mr-2"></i>Reels
-                    </button>
-                    <button onclick="showProfileTab('tagged')" id="profileTaggedTab" class="flex-1 py-3 text-center font-bold text-gray-400">
-                        <i class="fas fa-tag mr-2"></i>Tagged
-                    </button>
-                </div>
-
-                <!-- Profile Posts Grid -->
-                <div id="profilePostsGrid" class="grid grid-cols-3 gap-1 mt-2">
-                    <!-- Posts will load here -->
-                </div>
-                <div id="profileReelsGrid" class="hidden grid grid-cols-3 gap-1 mt-2"></div>
-                <div id="profileTaggedGrid" class="hidden grid grid-cols-3 gap-1 mt-2"></div>
-            </div>
-        </div>
-
-        <!-- SETTINGS SECTION - Facebook Style -->
-        <div id="settingsSection" class="hidden pb-20">
-            <div class="p-4">
-                <h2 class="text-2xl font-bold mb-6">Settings & Privacy</h2>
-                
-                <div class="space-y-2">
-                    <!-- Account Settings -->
-                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('account')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-user-circle text-2xl text-blue-600"></i>
-                                <div>
-                                    <h3 class="font-bold">Account</h3>
-                                    <p class="text-sm text-gray-500">Edit profile, change password</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                    </div>
-
-                    <!-- Privacy -->
-                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('privacy')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-lock text-2xl text-green-600"></i>
-                                <div>
-                                    <h3 class="font-bold">Privacy</h3>
-                                    <p class="text-sm text-gray-500">Control your visibility</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                    </div>
-
-                    <!-- Notifications -->
-                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('notifications')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-bell text-2xl text-yellow-600"></i>
-                                <div>
-                                    <h3 class="font-bold">Notifications</h3>
-                                    <p class="text-sm text-gray-500">Manage alerts</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                    </div>
-
-                    <!-- Dark Mode Toggle -->
-                    <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-moon text-2xl text-purple-600"></i>
-                            <div>
-                                <h3 class="font-bold">Dark Mode</h3>
-                                <p class="text-sm text-gray-500">Toggle theme</p>
-                            </div>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="darkModeToggle" class="sr-only peer" onchange="toggleDarkMode()">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
-
-                    <!-- Help & Support -->
-                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="openSettingsModal('help')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-question-circle text-2xl text-red-600"></i>
-                                <div>
-                                    <h3 class="font-bold">Help & Support</h3>
-                                    <p class="text-sm text-gray-500">Get help</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                    </div>
-
-                    <!-- Logout -->
-                    <div class="bg-gray-50 rounded-xl p-4 settings-item cursor-pointer" onclick="logout()">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-sign-out-alt text-2xl text-red-600"></i>
-                            <div>
-                                <h3 class="font-bold text-red-600">Logout</h3>
-                                <p class="text-sm text-gray-500">Sign out from DEEH</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Create Post Modal - Instagram Style -->
-        <div id="postModal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this) closeModal()">
-            <div class="bg-white rounded-2xl w-full max-w-md p-6 transform transition-all">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold">Create new post</h3>
-                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
-                </div>
-                
-                <textarea id="postText" rows="4" class="w-full p-3 border rounded-xl mb-4 focus:ring-2 focus:ring-blue-600 outline-none" placeholder="What's on your mind?"></textarea>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Add photo</label>
-                    <input type="file" id="postImage" accept="image/*" class="w-full p-2 border rounded-xl">
-                    <div id="imagePreview" class="mt-2 hidden"></div>
-                </div>
-                
-                <div class="flex gap-2">
-                    <button onclick="savePost()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition">
-                        <i class="fas fa-paper-plane mr-2"></i>Post
-                    </button>
-                    <button onclick="closeModal()" class="px-6 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Modal -->
-        <div id="settingsModal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center p-4" onclick="if(event.target===this) closeSettingsModal()">
-            <div class="bg-white rounded-2xl w-full max-w-md p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="settingsModalTitle" class="text-xl font-bold"></h3>
-                    <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
-                </div>
-                <div id="settingsModalContent" class="space-y-4"></div>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation - Custom Mix -->
-        <div class="fixed bottom-0 w-full max-w-[450px] bg-white border-t px-6 py-3 flex justify-between items-center">
-            <button onclick="showSection('feed')" class="flex flex-col items-center" id="navHome">
-                <i class="fas fa-home text-2xl"></i>
-                <span class="text-xs mt-1">Home</span>
-            </button>
-            <button onclick="showSection('explore')" class="flex flex-col items-center" id="navExplore">
-                <i class="fas fa-compass text-2xl"></i>
-                <span class="text-xs mt-1">Explore</span>
-            </button>
-            <button onclick="openModal()" class="bg-gradient-to-r from-blue-600 to-purple-600 w-14 h-14 rounded-full text-white text-2xl -mt-8 shadow-lg flex items-center justify-center">
-                <i class="fas fa-plus"></i>
-            </button>
-            <button onclick="showSection('profile')" class="flex flex-col items-center" id="navProfile">
-                <i class="fas fa-user text-2xl"></i>
-                <span class="text-xs mt-1">Profile</span>
-            </button>
-            <button onclick="showSection('settings')" class="flex flex-col items-center" id="navSettings">
-                <i class="fas fa-cog text-2xl"></i>
-                <span class="text-xs mt-1">Settings</span>
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- FIREBASE IMPORTS -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-        getAuth, 
-        createUserWithEmailAndPassword, 
-        signInWithEmailAndPassword,
-        updateProfile, 
-        signOut,
-        onAuthStateChanged,
-        updatePassword,
-        EmailAuthProvider,
-        reauthenticateWithCredential
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { 
-        getFirestore, 
-        collection, 
-        addDoc, 
-        query, 
-        orderBy, 
-        onSnapshot,
-        where,
-        getDocs,
-        serverTimestamp,
-        doc,
-        updateDoc,
-        deleteDoc,
-        arrayUnion,
-        arrayRemove,
-        increment,
-        limit,
-        getDoc
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import {
-        getStorage,
-        ref,
-        uploadBytes,
-        getDownloadURL,
-        deleteObject
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-
-    // 🔥 FIREBASE CONFIG
-    const firebaseConfig = {
-        apiKey: "AIzaSyBmwtDM6mget0nZhkGA0D-cUhMrgMd4LQs",
-        authDomain: "deeh-e87bf.firebaseapp.com",
-        projectId: "deeh-e87bf",
-        storageBucket: "deeh-e87bf.firebasestorage.app",
-        messagingSenderId: "618337488833",
-        appId: "1:618337488833:web:a0a9fdb3df462e6fc1a940"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    // Global Variables
-    let currentUser = null;
-    let unsubscribePosts = null;
-
-    // Utility Functions
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.style.background = type === 'success' ? '#10b981' : '#ef4444';
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-
-    function showLoading(show) {
-        document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
-    }
-
-    // Toggle Auth Tabs
-    window.toggleAuthTab = (tab) => {
-        const loginForm = document.getElementById('loginForm');
-        const signupForm = document.getElementById('signupForm');
-        const loginTab = document.getElementById('loginTabBtn');
-        const signupTab = document.getElementById('signupTabBtn');
-        
-        if (tab === 'login') {
-            loginForm.classList.remove('hidden');
-            signupForm.classList.add('hidden');
-            loginTab.classList.add('bg-blue-600', 'text-white');
-            loginTab.classList.remove('bg-gray-100', 'text-gray-600');
-            signupTab.classList.remove('bg-blue-600', 'text-white');
-            signupTab.classList.add('bg-gray-100', 'text-gray-600');
-        } else {
-            loginForm.classList.add('hidden');
-            signupForm.classList.remove('hidden');
-            signupTab.classList.add('bg-blue-600', 'text-white');
-            signupTab.classList.remove('bg-gray-100', 'text-gray-600');
-            loginTab.classList.remove('bg-blue-600', 'text-white');
-            loginTab.classList.add('bg-gray-100', 'text-gray-600');
+                saveData();
+            } else {
+                loadData();
+            }
         }
-    };
 
-    // Login Handler
-    document.getElementById('loginForm').onsubmit = async (e) => {
-        e.preventDefault();
-        showLoading(true);
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            showToast('Welcome back! 🎉');
-        } catch (err) {
-            showToast(err.message, 'error');
-        } finally {
-            showLoading(false);
+        function saveData() {
+            localStorage.setItem('deeh_users', JSON.stringify(users));
+            localStorage.setItem('deeh_posts', JSON.stringify(posts));
+            if (currentUser) {
+                localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+            }
         }
-    };
 
-    // Signup Handler
-    document.getElementById('signupForm').onsubmit = async (e) => {
-        e.preventDefault();
-        showLoading(true);
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const password = document.getElementById('regPassword').value;
-        
-        try {
-            const res = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(res.user, { displayName: name });
-            
-            // Create user profile
-            await addDoc(collection(db, "users"), {
-                uid: res.user.uid,
-                name: name,
-                email: email,
-                bio: "Building something amazing ✨",
-                followers: 0,
-                following: 0,
-                createdAt: serverTimestamp()
-            });
-            
-            showToast('Account created! 🎉');
-        } catch (err) {
-            showToast(err.message, 'error');
-        } finally {
-            showLoading(false);
+        function loadData() {
+            users = JSON.parse(localStorage.getItem('deeh_users')) || {};
+            posts = JSON.parse(localStorage.getItem('deeh_posts')) || [];
+            const savedUser = localStorage.getItem('deeh_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+            const savedDarkMode = localStorage.getItem('deeh_dark_mode');
+            if (savedDarkMode === 'true') {
+                darkMode = true;
+                document.body.classList.add('dark-mode');
+            }
         }
-    };
 
-    // Auth State Observer
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            
-            document.getElementById('authPage').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            
-            // Update profile UI
-            document.getElementById('pName').innerText = (user.displayName || 'User').toUpperCase();
-            document.getElementById('pEmail').innerText = user.email;
-            document.getElementById('pInitial').innerText = (user.displayName || 'U')[0].toUpperCase();
-            
-            // Load data
-            await loadUserPostCount(user.uid);
-            loadPosts();
-            loadProfilePosts(user.uid);
-        } else {
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('authPage').classList.remove('hidden');
-            if (unsubscribePosts) unsubscribePosts();
+        // ========== HELPER FUNCTIONS ==========
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return diffMins + 'm ago';
+            if (diffHours < 24) return diffHours + 'h ago';
+            return diffDays + 'd ago';
         }
-    });
 
-    // Load User Post Count
-    async function loadUserPostCount(uid) {
-        const q = query(collection(db, "posts"), where("userId", "==", uid));
-        const snapshot = await getDocs(q);
-        document.getElementById('userPostCount').textContent = snapshot.size;
-    }
+        function getCurrentUserObject() {
+            return currentUser ? users[currentUser.username] : null;
+        }
 
-    // Load Posts for Feed
-    function loadPosts() {
-        const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-        
-        unsubscribePosts = onSnapshot(q, (snapshot) => {
-            const list = document.getElementById('postsList');
-            
-            if (snapshot.empty) {
-                list.innerHTML = '<div class="p-8 text-center text-gray-400">No posts yet. Be the first! ✨</div>';
+        function renderNav() {
+            const navLinks = document.getElementById('navLinks');
+            const bottomNav = document.getElementById('bottomNav');
+
+            if (currentUser) {
+                navLinks.innerHTML = `
+                    <a class="${currentView === 'feed' ? 'active' : ''}" onclick="changeView('feed')"><i class="fas fa-home"></i> Home</a>
+                    <a class="${currentView === 'search' ? 'active' : ''}" onclick="changeView('search')"><i class="fas fa-search"></i> Search</a>
+                    <a class="${currentView === 'profile' ? 'active' : ''}" onclick="changeView('profile')"><i class="fas fa-user"></i> Profile</a>
+                    <a class="${currentView === 'settings' ? 'active' : ''}" onclick="changeView('settings')"><i class="fas fa-cog"></i> Settings</a>
+                `;
+                bottomNav.innerHTML = `
+                    <a class="${currentView === 'feed' ? 'active' : ''}" onclick="changeView('feed')"><i class="fas fa-home"></i></a>
+                    <a class="${currentView === 'search' ? 'active' : ''}" onclick="changeView('search')"><i class="fas fa-search"></i></a>
+                    <a onclick="showCreatePost()"><i class="fas fa-plus-circle"></i></a>
+                    <a class="${currentView === 'profile' ? 'active' : ''}" onclick="changeView('profile')"><i class="fas fa-user"></i></a>
+                    <a class="${currentView === 'settings' ? 'active' : ''}" onclick="changeView('settings')"><i class="fas fa-cog"></i></a>
+                `;
+            } else {
+                navLinks.innerHTML = `
+                    <a onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a onclick="showRegister()"><i class="fas fa-user-plus"></i> Register</a>
+                `;
+                bottomNav.innerHTML = `
+                    <a onclick="showLogin()"><i class="fas fa-home"></i></a>
+                    <a onclick="showLogin()"><i class="fas fa-search"></i></a>
+                    <a onclick="showLogin()"><i class="fas fa-user"></i></a>
+                    <a onclick="showLogin()"><i class="fas fa-cog"></i></a>
+                `;
+            }
+        }
+
+        function changeView(view) {
+            if (!currentUser && view !== 'login' && view !== 'register') {
+                showLogin();
                 return;
             }
+            currentView = view;
+            if (view === 'feed') showFeed();
+            else if (view === 'search') showSearch();
+            else if (view === 'profile') showProfile(currentUser.username);
+            else if (view === 'settings') showSettings();
+            else if (view === 'userProfile' && viewingUserId) showProfile(viewingUserId);
+        }
 
-            let postsHTML = '';
-            snapshot.forEach((doc) => {
-                const post = doc.data();
-                const postId = doc.id;
-                const isLiked = post.likedBy?.includes(currentUser?.uid) || false;
-                const time = post.timestamp?.toDate?.() || new Date();
-                
-                postsHTML += `
-                    <div class="post-card p-4" id="post-${postId}">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                                    ${post.userName?.[0] || 'U'}
-                                </div>
-                                <div>
-                                    <p class="font-bold">${post.userName}</p>
-                                    <p class="text-xs text-gray-400">${time.toLocaleString()}</p>
-                                </div>
-                            </div>
-                            ${post.userId === currentUser?.uid ? `
-                                <button onclick="deletePost('${postId}')" class="text-gray-400 hover:text-red-500">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : ''}
+        // ========== AUTH ==========
+        function showLogin() {
+            currentView = 'login';
+            renderNav();
+            document.getElementById('mainContent').innerHTML = `
+                <div style="max-width: 400px; margin: 2rem auto;">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Welcome Back</h2>
+                    <form id="loginForm">
+                        <div style="margin-bottom: 1rem;">
+                            <label>Username</label>
+                            <input type="text" id="loginUsername" placeholder="Enter username" style="width:100%; padding:0.8rem; border:1px solid var(--border); border-radius:0.5rem; background:var(--bg-primary); color:var(--text-primary);">
                         </div>
-                        
-                        <p class="text-gray-700 mb-3">${post.content || ''}</p>
-                        
-                        ${post.imageUrl ? `
-                            <img src="${post.imageUrl}" class="w-full rounded-xl mb-3 max-h-96 object-cover">
-                        ` : ''}
-                        
-                        <div class="flex items-center justify-between pt-3 border-t">
-                            <button onclick="likePost('${postId}')" class="flex items-center space-x-2 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
-                                <i class="fas fa-heart text-xl ${isLiked ? 'font-bold' : ''}"></i>
-                                <span class="text-sm font-medium">${post.likes || 0}</span>
-                            </button>
-                            
-                            <button onclick="toggleComments('${postId}')" class="flex items-center space-x-2 text-gray-400">
-                                <i class="fas fa-comment text-xl"></i>
-                                <span class="text-sm font-medium">${post.comments?.length || 0}</span>
-                            </button>
-                            
-                            <button onclick="sharePost('${postId}')" class="text-gray-400">
-                                <i class="fas fa-paper-plane text-xl"></i>
-                            </button>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" placeholder="Enter password" style="width:100%; padding:0.8rem; border:1px solid var(--border); border-radius:0.5rem; background:var(--bg-primary); color:var(--text-primary);">
                         </div>
+                        <button type="submit" style="width:100%; padding:0.8rem; background:var(--accent); color:white; border:none; border-radius:0.5rem; font-size:1rem;">Log In</button>
+                        <p style="text-align:center; margin-top:1rem;">
+                            Don't have an account? <a href="#" onclick="showRegister()" style="color:var(--accent);">Sign up</a>
+                        </p>
+                    </form>
+                </div>
+            `;
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value; // dummy check
+                if (username && password && users[username]) {
+                    currentUser = { username, name: users[username].name, email: users[username].email };
+                    localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+                    changeView('feed');
+                } else {
+                    alert('Invalid username or password (try alice/bob/charlie with any password)');
+                }
+            });
+        }
 
-                        <!-- Comments Section -->
-                        <div id="comments-${postId}" class="hidden mt-4">
-                            <div class="flex space-x-2 mb-3">
-                                <input type="text" id="comment-${postId}" placeholder="Write a comment..." class="flex-1 p-2 bg-gray-50 rounded-xl text-sm">
-                                <button onclick="addComment('${postId}')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm">Post</button>
+        function showRegister() {
+            currentView = 'register';
+            renderNav();
+            document.getElementById('mainContent').innerHTML = `
+                <div style="max-width: 400px; margin: 2rem auto;">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Join Deeh</h2>
+                    <form id="registerForm">
+                        <div style="margin-bottom: 1rem;">
+                            <label>Name</label>
+                            <input type="text" id="regName" required style="width:100%; padding:0.8rem; border:1px solid var(--border); border-radius:0.5rem; background:var(--bg-primary); color:var(--text-primary);">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label>Username</label>
+                            <input type="text" id="regUsername" required style="width:100%; padding:0.8rem; border:1px solid var(--border); border-radius:0.5rem; background:var(--bg-primary); color:var(--text-primary);">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label>Email</label>
+                            <input type="email" id="regEmail" required style="width:100%; padding:0.8rem; border:1px solid var(--border); border-radius:0.5rem; background:var(--bg-primary); color:var(--text-primary);">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label>Password</label>
+                            <input type="password" id="regPassword" required style="width:100%; padding:0.8rem; border:1px solid var(--border); border-radius:0.5rem; background:var(--bg-primary); color:var(--text-primary);">
+                        </div>
+                        <button type="submit" style="width:100%; padding:0.8rem; background:var(--accent); color:white; border:none; border-radius:0.5rem; font-size:1rem;">Sign Up</button>
+                        <p style="text-align:center; margin-top:1rem;">
+                            Already have an account? <a href="#" onclick="showLogin()" style="color:var(--accent);">Log in</a>
+                        </p>
+                    </form>
+                </div>
+            `;
+            document.getElementById('registerForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('regName').value.trim();
+                const username = document.getElementById('regUsername').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
+                const password = document.getElementById('regPassword').value;
+
+                if (users[username]) {
+                    alert('Username already taken');
+                    return;
+                }
+
+                const newUser = {
+                    username,
+                    name,
+                    avatar: name.charAt(0).toUpperCase(),
+                    email,
+                    bio: '',
+                    followers: [],
+                    following: [],
+                    privacy: { public: true, messages: 'everyone' }
+                };
+                users[username] = newUser;
+                currentUser = { username, name, email };
+                localStorage.setItem('deeh_current_user', JSON.stringify(currentUser));
+                saveData();
+                changeView('feed');
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('deeh_current_user');
+            currentUser = null;
+            showLogin();
+        }
+
+        // ========== FEED ==========
+        function showFeed() {
+            currentView = 'feed';
+            renderNav();
+            let html = `
+                <div class="create-post clearfix">
+                    <textarea id="newPostContent" placeholder="What's on your mind, ${currentUser.name}?"></textarea>
+                    <button onclick="createPost()">Post</button>
+                </div>
+                <div id="postsContainer"></div>
+            `;
+            document.getElementById('mainContent').innerHTML = html;
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            if (!container) return;
+
+            // Sort posts by time descending
+            const sortedPosts = [...posts].sort((a, b) => new Date(b.time) - new Date(a.time));
+
+            let postsHtml = '';
+            sortedPosts.forEach(post => {
+                const user = users[post.userId];
+                if (!user) return;
+                const isLiked = post.likedBy.includes(currentUser.username);
+                const timeAgo = formatTime(post.time);
+                postsHtml += `
+                    <div class="post" id="post-${post.id}">
+                        <div class="post-header" onclick="viewUserProfile('${post.userId}')">
+                            <div class="post-avatar">${user.avatar}</div>
+                            <div class="post-user-info">
+                                <div class="post-username">${user.name}</div>
+                                <div class="post-time">${timeAgo}</div>
                             </div>
-                            <div id="comments-list-${postId}" class="space-y-2 max-h-48 overflow-y-auto">
-                                ${post.comments?.map(comment => `
-                                    <div class="bg-gray-50 p-3 rounded-xl">
-                                        <p class="text-xs font-bold">${comment.userName}</p>
-                                        <p class="text-sm">${comment.text}</p>
-                                    </div>
-                                `).join('') || ''}
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="post-stats">
+                            <span><i class="fas fa-heart" style="color:#ef4444;"></i> ${post.likes} likes</span>
+                            <span><i class="fas fa-comment"></i> ${post.comments.length} comments</span>
+                            <span><i class="fas fa-share"></i> ${post.shares} shares</span>
+                        </div>
+                        <div class="post-actions">
+                            <div class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                                <i class="fas fa-heart"></i> Like
+                            </div>
+                            <div class="post-action" onclick="toggleComments(${post.id})">
+                                <i class="fas fa-comment"></i> Comment
+                            </div>
+                            <div class="post-action" onclick="sharePost(${post.id})">
+                                <i class="fas fa-share"></i> Share
+                            </div>
+                        </div>
+                        <div class="comments-section hidden" id="comments-${post.id}">
+                            ${renderComments(post.comments)}
+                            <div class="add-comment">
+                                <input type="text" id="comment-input-${post.id}" placeholder="Write a comment...">
+                                <button onclick="addComment(${post.id})">Post</button>
                             </div>
                         </div>
                     </div>
                 `;
             });
-            
-            list.innerHTML = postsHTML;
-        });
-    }
-
-    // Load Profile Posts Grid
-    async function loadProfilePosts(uid) {
-        const q = query(collection(db, "posts"), where("userId", "==", uid), orderBy("timestamp", "desc"), limit(9));
-        const snapshot = await getDocs(q);
-        const grid = document.getElementById('profilePostsGrid');
-        
-        if (snapshot.empty) {
-            grid.innerHTML = '<div class="col-span-3 text-center py-10 text-gray-400">No posts yet</div>';
-            return;
+            container.innerHTML = postsHtml;
         }
 
-        let html = '';
-        snapshot.forEach((doc) => {
-            const post = doc.data();
-            html += `
-                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                    ${post.imageUrl ? 
-                        `<img src="${post.imageUrl}" class="w-full h-full object-cover">` : 
-                        `<div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl">📝</div>`
-                    }
-                </div>
-            `;
-        });
-        grid.innerHTML = html;
-    }
-
-    // Save Post
-    window.savePost = async function() {
-        const text = document.getElementById('postText').value.trim();
-        const imageFile = document.getElementById('postImage').files[0];
-        
-        if (!text && !imageFile) {
-            showToast('Write something or add a photo!', 'error');
-            return;
+        function renderComments(comments) {
+            if (!comments || comments.length === 0) return '<p style="color:var(--text-secondary); text-align:center;">No comments yet.</p>';
+            return comments.map(c => {
+                const commentUser = users[c.userId];
+                if (!commentUser) return '';
+                return `
+                    <div class="comment">
+                        <div class="comment-avatar" onclick="viewUserProfile('${c.userId}')">${commentUser.avatar}</div>
+                        <div class="comment-content">
+                            <div class="comment-user" onclick="viewUserProfile('${c.userId}')">${commentUser.name}</div>
+                            <div class="comment-text">${c.text}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        showLoading(true);
-        
-        try {
-            let imageUrl = null;
-            
-            if (imageFile) {
-                const storageRef = ref(storage, `posts/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
-                const snapshot = await uploadBytes(storageRef, imageFile);
-                imageUrl = await getDownloadURL(snapshot.ref);
-            }
+        function createPost() {
+            const content = document.getElementById('newPostContent').value.trim();
+            if (!content) return;
 
-            await addDoc(collection(db, "posts"), {
-                content: text,
-                userId: currentUser.uid,
-                userName: currentUser.displayName || 'User',
-                imageUrl: imageUrl,
-                timestamp: serverTimestamp(),
+            const newPost = {
+                id: Date.now(),
+                userId: currentUser.username,
+                content,
+                time: new Date().toISOString(),
                 likes: 0,
                 likedBy: [],
-                comments: []
-            });
-            
-            document.getElementById('postText').value = '';
-            document.getElementById('postImage').value = '';
-            document.getElementById('imagePreview').innerHTML = '';
-            document.getElementById('imagePreview').classList.add('hidden');
-            closeModal();
-            
-            showToast('Post published! 🎉');
-            await loadUserPostCount(currentUser.uid);
-            loadProfilePosts(currentUser.uid);
-            
-        } catch (err) {
-            showToast('Error: ' + err.message, 'error');
-        } finally {
-            showLoading(false);
-        }
-    };
-
-    // Like Post
-    window.likePost = async (postId) => {
-        const postRef = doc(db, "posts", postId);
-        const postSnapshot = await getDocs(query(collection(db, "posts"), where("__name__", "==", postId)));
-        const post = postSnapshot.docs[0]?.data();
-        
-        if (post?.likedBy?.includes(currentUser.uid)) {
-            await updateDoc(postRef, { 
-                likes: increment(-1), 
-                likedBy: arrayRemove(currentUser.uid) 
-            });
-        } else {
-            await updateDoc(postRef, { 
-                likes: increment(1), 
-                likedBy: arrayUnion(currentUser.uid) 
-            });
-        }
-    };
-
-    // Add Comment
-    window.addComment = async (postId) => {
-        const commentInput = document.getElementById(`comment-${postId}`);
-        const commentText = commentInput.value.trim();
-        
-        if (!commentText) return;
-        
-        const postRef = doc(db, "posts", postId);
-        
-        await updateDoc(postRef, {
-            comments: arrayUnion({
-                userId: currentUser.uid,
-                userName: currentUser.displayName || 'User',
-                text: commentText,
-                timestamp: new Date().toISOString()
-            })
-        });
-        
-        commentInput.value = "";
-        showToast("Comment added!");
-    };
-
-    // Delete Post
-    window.deletePost = async (postId) => {
-        if (!confirm("Delete this post?")) return;
-        
-        showLoading(true);
-        await deleteDoc(doc(db, "posts", postId));
-        showToast("Post deleted");
-        await loadUserPostCount(currentUser.uid);
-        loadProfilePosts(currentUser.uid);
-        showLoading(false);
-    };
-
-    // Share Post
-    window.sharePost = (postId) => {
-        navigator.clipboard?.writeText(window.location.href + '#post-' + postId);
-        showToast("Link copied! 📋");
-    };
-
-    // Toggle Comments
-    window.toggleComments = (postId) => {
-        const commentsDiv = document.getElementById(`comments-${postId}`);
-        if (commentsDiv) commentsDiv.classList.toggle('hidden');
-    };
-
-    // Logout
-    window.logout = async () => {
-        await signOut(auth);
-        showToast("Logged out successfully");
-    };
-
-    // Modal Functions
-    window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
-    window.closeModal = () => {
-        document.getElementById('postModal').classList.add('hidden');
-        document.getElementById('postText').value = '';
-        document.getElementById('postImage').value = '';
-        document.getElementById('imagePreview').innerHTML = '';
-        document.getElementById('imagePreview').classList.add('hidden');
-    };
-
-    // Image Preview
-    document.getElementById('postImage')?.addEventListener('change', function(e) {
-        const preview = document.getElementById('imagePreview');
-        const file = e.target.files[0];
-        
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" class="preview-image">`;
-                preview.classList.remove('hidden');
+                comments: [],
+                shares: 0
             };
-            reader.readAsDataURL(file);
+            posts.unshift(newPost);
+            saveData();
+            showFeed();
+        }
+
+        function toggleLike(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            const index = post.likedBy.indexOf(currentUser.username);
+            if (index === -1) {
+                post.likedBy.push(currentUser.username);
+                post.likes++;
+            } else {
+                post.likedBy.splice(index, 1);
+                post.likes--;
+            }
+            saveData();
+            renderPosts();
+        }
+
+        function toggleComments(postId) {
+            const section = document.getElementById(`comments-${postId}`);
+            if (section) section.classList.toggle('hidden');
+        }
+
+        function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const text = input.value.trim();
+            if (!text) return;
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.comments.push({
+                    id: Date.now(),
+                    userId: currentUser.username,
+                    text
+                });
+                saveData();
+                renderPosts();
+                document.getElementById(`comments-${postId}`).classList.remove('hidden');
+            }
+        }
+
+        function sharePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.shares++;
+                saveData();
+                renderPosts();
+                alert('Post shared! (Demo)');
+            }
+        }
+
+        // ========== SEARCH ==========
+        function showSearch() {
+            currentView = 'search';
+            renderNav();
+            document.getElementById('mainContent').innerHTML = `
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search users..." onkeyup="performSearch()">
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            `;
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const resultsDiv = document.getElementById('searchResults');
+            if (!query) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+            const matched = Object.values(users).filter(u => 
+                u.name.toLowerCase().includes(query) || u.username.toLowerCase().includes(query)
+            );
+            if (matched.length === 0) {
+                resultsDiv.innerHTML = '<p style="text-align:center; color:var(--text-secondary);">No users found</p>';
+                return;
+            }
+            let html = '';
+            matched.forEach(u => {
+                html += `
+                    <div class="search-result-item" onclick="viewUserProfile('${u.username}')">
+                        <div class="suggestion-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:white;">${u.avatar}</div>
+                        <div>
+                            <div style="font-weight:600;">${u.name}</div>
+                            <div style="color:var(--text-secondary);">@${u.username}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            resultsDiv.innerHTML = html;
+        }
+
+        // ========== PROFILE (any user) ==========
+        function viewUserProfile(username) {
+            viewingUserId = username;
+            currentView = 'userProfile';
+            showProfile(username);
+        }
+
+        function showProfile(username) {
+            const user = users[username];
+            if (!user) return;
+
+            renderNav();
+            const isOwnProfile = (currentUser.username === username);
+            const userPosts = posts.filter(p => p.userId === username);
+            const totalLikes = userPosts.reduce((sum, p) => sum + p.likes, 0);
+            const isFollowing = isOwnProfile ? false : user.followers.includes(currentUser.username);
+
+            let html = `
+                <div class="profile-header">
+                    <div class="profile-avatar-large">${user.avatar}</div>
+                    <h2>${user.name}</h2>
+                    <p style="color:var(--text-secondary);">@${user.username}</p>
+                    <p style="margin-top:0.5rem;">${user.bio || 'No bio yet.'}</p>
+                    ${!isOwnProfile ? `
+                        <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${user.username}')">
+                            ${isFollowing ? 'Following' : 'Follow'}
+                        </button>
+                    ` : ''}
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-box">
+                        <div class="stat-number">${userPosts.length}</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">${totalLikes}</div>
+                        <div class="stat-label">Likes</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">${user.followers.length}</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                </div>
+                <h3 style="margin: 2rem 0 1rem;">Posts</h3>
+                <div id="userPostsContainer"></div>
+            `;
+            document.getElementById('mainContent').innerHTML = html;
+
+            const container = document.getElementById('userPostsContainer');
+            if (userPosts.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-secondary);">No posts yet.</p>';
+            } else {
+                let postsHtml = '';
+                userPosts.forEach(post => {
+                    postsHtml += `
+                        <div class="post">
+                            <div class="post-content">${post.content}</div>
+                            <div class="post-stats" style="border:none;">
+                                <span><i class="fas fa-heart" style="color:#ef4444;"></i> ${post.likes}</span>
+                                <span><i class="fas fa-comment"></i> ${post.comments.length}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = postsHtml;
+            }
+        }
+
+        function toggleFollow(username) {
+            const target = users[username];
+            const current = users[currentUser.username];
+            if (!target || !current) return;
+
+            const index = target.followers.indexOf(currentUser.username);
+            if (index === -1) {
+                target.followers.push(currentUser.username);
+                current.following.push(username);
+            } else {
+                target.followers.splice(index, 1);
+                const followingIndex = current.following.indexOf(username);
+                if (followingIndex !== -1) current.following.splice(followingIndex, 1);
+            }
+            saveData();
+            showProfile(username);
+        }
+
+        // ========== SETTINGS ==========
+        function showSettings() {
+            currentView = 'settings';
+            renderNav();
+            renderSettings();
+        }
+
+        function renderSettings() {
+            const user = users[currentUser.username];
+            if (!user) return;
+
+            let html = `
+                <div class="settings-tabs">
+                    <div class="settings-tab ${settingsTab === 'account' ? 'active' : ''}" onclick="switchSettingsTab('account')">Account</div>
+                    <div class="settings-tab ${settingsTab === 'privacy' ? 'active' : ''}" onclick="switchSettingsTab('privacy')">Privacy</div>
+                    <div class="settings-tab ${settingsTab === 'notifications' ? 'active' : ''}" onclick="switchSettingsTab('notifications')">Notifications</div>
+                    <div class="settings-tab ${settingsTab === 'appearance' ? 'active' : ''}" onclick="switchSettingsTab('appearance')">Appearance</div>
+                </div>
+                <div id="settingsContent"></div>
+            `;
+            document.getElementById('mainContent').innerHTML = html;
+            loadSettingsTab();
+        }
+
+        function switchSettingsTab(tab) {
+            settingsTab = tab;
+            renderSettings();
+        }
+
+        function loadSettingsTab() {
+            const user = users[currentUser.username];
+            const container = document.getElementById('settingsContent');
+            if (!container) return;
+
+            if (settingsTab === 'account') {
+                container.innerHTML = `
+                    <div class="settings-section">
+                        <h3>Profile Information</h3>
+                        <div class="settings-item">
+                            <span class="settings-label">Name</span>
+                            <input type="text" id="settingsName" class="settings-input" value="${user.name}">
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Username</span>
+                            <input type="text" id="settingsUsername" class="settings-input" value="${user.username}" disabled style="background:var(--border);">
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Email</span>
+                            <input type="email" id="settingsEmail" class="settings-input" value="${user.email}">
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Bio</span>
+                            <textarea id="settingsBio" class="settings-input" rows="3">${user.bio || ''}</textarea>
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Profile Picture</span>
+                            <div style="display:flex; gap:1rem; align-items:center;">
+                                <div class="profile-avatar-large" style="width:60px; height:60px; font-size:1.5rem; margin:0;">${user.avatar}</div>
+                                <button onclick="changeAvatar()" class="follow-btn" style="width:auto;">Change</button>
+                            </div>
+                        </div>
+                        <button onclick="saveAccountSettings()" class="follow-btn" style="width:100%; margin-top:1rem;">Save Changes</button>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Account Management</h3>
+                        <div class="settings-item">
+                            <span class="settings-label">Change Password</span>
+                            <button onclick="changePassword()" class="follow-btn" style="width:auto;">Change</button>
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Delete Account</span>
+                            <button onclick="deleteAccount()" class="danger-btn">Delete</button>
+                        </div>
+                    </div>
+                `;
+            } else if (settingsTab === 'privacy') {
+                container.innerHTML = `
+                    <div class="settings-section">
+                        <h3>Privacy Settings</h3>
+                        <div class="settings-item">
+                            <span class="settings-label">Private Account</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="privateAccount" ${!user.privacy.public ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Who can see your posts</span>
+                            <select id="postPrivacy" class="settings-input">
+                                <option value="public" ${user.privacy.public ? 'selected' : ''}>Everyone</option>
+                                <option value="followers" ${!user.privacy.public ? 'selected' : ''}>Followers only</option>
+                            </select>
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Who can message you</span>
+                            <select id="messagePrivacy" class="settings-input">
+                                <option value="everyone" ${user.privacy.messages === 'everyone' ? 'selected' : ''}>Everyone</option>
+                                <option value="followers" ${user.privacy.messages === 'followers' ? 'selected' : ''}>Followers only</option>
+                                <option value="none" ${user.privacy.messages === 'none' ? 'selected' : ''}>No one</option>
+                            </select>
+                        </div>
+                        <button onclick="savePrivacySettings()" class="follow-btn" style="width:100%; margin-top:1rem;">Save Privacy</button>
+                    </div>
+                `;
+            } else if (settingsTab === 'notifications') {
+                container.innerHTML = `
+                    <div class="settings-section">
+                        <h3>Notification Preferences</h3>
+                        <div class="settings-item">
+                            <span class="settings-label">Email Notifications</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="emailNotifications" ${localStorage.getItem('deeh_email_notif') !== 'false' ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Push Notifications</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pushNotifications" ${localStorage.getItem('deeh_push_notif') !== 'false' ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <button onclick="saveNotificationSettings()" class="follow-btn" style="width:100%; margin-top:1rem;">Save Preferences</button>
+                    </div>
+                `;
+            } else if (settingsTab === 'appearance') {
+                container.innerHTML = `
+                    <div class="settings-section">
+                        <h3>Appearance</h3>
+                        <div class="settings-item">
+                            <span class="settings-label">Dark Mode</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="darkModeToggle" ${darkMode ? 'checked' : ''} onchange="toggleDarkMode()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <span class="settings-label">Accent Color</span>
+                            <input type="color" id="accentColor" value="#3b82f6" onchange="changeAccentColor(this.value)">
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function saveAccountSettings() {
+            const user = users[currentUser.username];
+            const newName = document.getElementById('settingsName')?.value.trim();
+            const newEmail = document.getElementById('settingsEmail')?.value.trim();
+            const newBio = document.getElementById('settingsBio')?.value.trim();
+            if (newName) user.name = newName;
+            if (newEmail) user.email = newEmail;
+            user.bio = newBio;
+            currentUser.name = newName;
+            currentUser.email = newEmail;
+            saveData();
+            alert('Profile updated!');
+            renderSettings();
+        }
+
+        function changeAvatar() {
+            const newAvatar = prompt('Enter new avatar initial (single letter):', users[currentUser.username].avatar);
+            if (newAvatar && newAvatar.length === 1) {
+                users[currentUser.username].avatar = newAvatar.toUpperCase();
+                saveData();
+                renderSettings();
+            }
+        }
+
+        function changePassword() {
+            alert('Password change would be implemented with backend. (Demo)');
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure? This cannot be undone.')) {
+                delete users[currentUser.username];
+                posts = posts.filter(p => p.userId !== currentUser.username);
+                localStorage.removeItem('deeh_current_user');
+                currentUser = null;
+                saveData();
+                showLogin();
+            }
+        }
+
+        function savePrivacySettings() {
+            const user = users[currentUser.username];
+            const privateAccount = document.getElementById('privateAccount')?.checked;
+            const postPrivacy = document.getElementById('postPrivacy')?.value;
+            const messagePrivacy = document.getElementById('messagePrivacy')?.value;
+
+            user.privacy.public = !privateAccount; // if privateAccount checked => public false
+            // For simplicity, we also set based on dropdown; but we can combine
+            if (postPrivacy === 'followers') user.privacy.public = false;
+            else user.privacy.public = true;
+
+            user.privacy.messages = messagePrivacy;
+            saveData();
+            alert('Privacy settings saved!');
+        }
+
+        function saveNotificationSettings() {
+            const email = document.getElementById('emailNotifications')?.checked;
+            const push = document.getElementById('pushNotifications')?.checked;
+            localStorage.setItem('deeh_email_notif', email);
+            localStorage.setItem('deeh_push_notif', push);
+            alert('Notification preferences saved!');
+        }
+
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            localStorage.setItem('deeh_dark_mode', darkMode);
+        }
+
+        function changeAccentColor(color) {
+            document.documentElement.style.setProperty('--accent', color);
+            localStorage.setItem('deeh_accent_color', color);
+        }
+
+        function showCreatePost() {
+            changeView('feed');
+            setTimeout(() => document.getElementById('newPostContent')?.focus(), 100);
+        }
+
+        // Initialize
+        initData();
+        if (currentUser) {
+            changeView('feed');
         } else {
-            preview.classList.add('hidden');
-            preview.innerHTML = '';
+            showLogin();
         }
-    });
 
-    // Section Toggle
-    window.showSection = (section) => {
-        const sections = ['feed', 'explore', 'profile', 'settings'];
-        const tabs = ['feedTab', 'exploreTab', 'profileTab', 'settingsTab'];
-        const navs = ['navHome', 'navExplore', 'navProfile', 'navSettings'];
-        
-        sections.forEach(s => {
-            document.getElementById(s + 'Section')?.classList.add('hidden');
-        });
-        
-        document.getElementById(section + 'Section')?.classList.remove('hidden');
-        
-        tabs.forEach((tab, index) => {
-            const el = document.getElementById(tab);
-            if (el) {
-                if (sections[index] === section) {
-                    el.classList.add('active-tab');
-                    el.classList.remove('text-gray-400');
-                } else {
-                    el.classList.remove('active-tab');
-                    el.classList.add('text-gray-400');
-                }
-            }
-        });
-        
-        navs.forEach((nav, index) => {
-            const el = document.getElementById(nav);
-            if (el) {
-                if (sections[index] === section) {
-                    el.classList.add('text-blue-600');
-                } else {
-                    el.classList.remove('text-blue-600');
-                }
-            }
-        });
-    };
-
-    // Profile Tab Toggle
-    window.showProfileTab = (tab) => {
-        const tabs = ['posts', 'reels', 'tagged'];
-        tabs.forEach(t => {
-            document.getElementById('profile' + t.charAt(0).toUpperCase() + t.slice(1) + 'Grid')?.classList.add('hidden');
-            document.getElementById('profile' + t.charAt(0).toUpperCase() + t.slice(1) + 'Tab')?.classList.remove('text-blue-600', 'border-blue-600');
-            document.getElementById('profile' + t.charAt(0).toUpperCase() + t.slice(1) + 'Tab')?.classList.add('text-gray-400');
-        });
-        
-        document.getElementById('profile' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Grid')?.classList.remove('hidden');
-        document.getElementById('profile' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab')?.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-        document.getElementById('profile' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab')?.classList.remove('text-gray-400');
-    };
-
-    // Settings Modal
-    window.openSettingsModal = (type) => {
-        const modal = document.getElementById('settingsModal');
-        const title = document.getElementById('settingsModalTitle');
-        const content = document.getElementById('settingsModalContent');
-        
-        title.innerText = type.charAt(0).toUpperCase() + type.slice(1) + ' Settings';
-        
-        if (type === 'account') {
-            content.innerHTML = `
-                <input type="text" id="editName" placeholder="Full Name" value="${currentUser?.displayName || ''}" class="w-full p-3 border rounded-xl">
-                <button onclick="updateProfileName()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl">Update Name</button>
-                <div class="border-t my-4"></div>
-                <input type="password" id="currentPassword" placeholder="Current Password" class="w-full p-3 border rounded-xl mb-3">
-                <input type="password" id="newPassword" placeholder="New Password" class="w-full p-3 border rounded-xl mb-3">
-                <button onclick="changePassword()" class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl">Change Password</button>
-            `;
-        } else if (type === 'privacy') {
-            content.innerHTML = `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                    <span>Private Account</span>
-                    <input type="checkbox" class="toggle">
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                    <span>Show Activity Status</span>
-                    <input type="checkbox" checked class="toggle">
-                </div>
-            `;
-        } else if (type === 'notifications') {
-            content.innerHTML = `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                    <span>Push Notifications</span>
-                    <input type="checkbox" checked class="toggle">
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                    <span>Email Notifications</span>
-                    <input type="checkbox" checked class="toggle">
-                </div>
-            `;
-        } else if (type === 'help') {
-            content.innerHTML = `
-                <p class="text-gray-600 mb-4">Need help? Contact us:</p>
-                <a href="mailto:support@deeh.com" class="block p-3 bg-blue-50 text-blue-600 rounded-xl text-center">support@deeh.com</a>
-            `;
+        // Load accent color if saved
+        const savedAccent = localStorage.getItem('deeh_accent_color');
+        if (savedAccent) {
+            document.documentElement.style.setProperty('--accent', savedAccent);
         }
-        
-        modal.classList.remove('hidden');
-    };
-
-    window.closeSettingsModal = () => {
-        document.getElementById('settingsModal').classList.add('hidden');
-    };
-
-    // Update Profile Name
-    window.updateProfileName = async () => {
-        const newName = document.getElementById('editName').value;
-        if (!newName) return;
-        
-        showLoading(true);
-        await updateProfile(auth.currentUser, { displayName: newName });
-        document.getElementById('pName').innerText = newName.toUpperCase();
-        document.getElementById('pInitial').innerText = newName[0].toUpperCase();
-        showToast("Profile updated!");
-        closeSettingsModal();
-        showLoading(false);
-    };
-
-    // Change Password
-    window.changePassword = async () => {
-        const currentPass = document.getElementById('currentPassword').value;
-        const newPass = document.getElementById('newPassword').value;
-        
-        if (!currentPass || !newPass) {
-            showToast("Fill all fields", 'error');
-            return;
-        }
-        
-        showLoading(true);
-        try {
-            const credential = EmailAuthProvider.credential(currentUser.email, currentPass);
-            await reauthenticateWithCredential(currentUser, credential);
-            await updatePassword(currentUser, newPass);
-            showToast("Password updated!");
-            closeSettingsModal();
-        } catch (err) {
-            showToast(err.message, 'error');
-        } finally {
-            showLoading(false);
-        }
-    };
-
-    // Dark Mode Toggle
-    window.toggleDarkMode = () => {
-        const container = document.getElementById('appContainer');
-        container.classList.toggle('dark-mode');
-    };
-</script>
-
-<!-- Global functions -->
-<script>
-    window.showSection = (section) => window.showSection(section);
-    window.openModal = () => window.openModal();
-    window.closeModal = () => window.closeModal();
-    window.savePost = () => window.savePost();
-    window.logout = () => window.logout();
-    window.showLoginForm = () => window.toggleAuthTab('login');
-    window.showSignupForm = () => window.toggleAuthTab('signup');
-</script>
-
+    </script>
 </body>
 </html>
